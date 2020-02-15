@@ -81,7 +81,7 @@ def save_output(episode_rewards, output_dir="../data/"):
     output["mean_all_episodes"] = np.array(episode_rewards).mean()
     output["std_all_episodes"] = np.array(episode_rewards).std()
  
-    fname = os.path.join(output_dir, "output", "results_manually-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S"))
+    fname = os.path.join(output_dir, "results_manually-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S"))
     fh = open(fname, "w")
     json.dump(output, fh)
     print('... finished')
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     data_dir = os.path.join("../data", args.user)
-    output_dir = os.path.join("../data", args.user)
+    output_dir = os.path.join("../data", "output", args.user)
 
     good_samples = {
         "state": [],
