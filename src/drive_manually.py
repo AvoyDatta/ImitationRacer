@@ -93,7 +93,13 @@ if __name__ == "__main__":
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
 
     args = parser.parse_args()
-    
+
+    # create directory if not present
+    if not os.path.isdir('../data'):
+        os.mkdir('../data')
+    if not os.path.exists('../data/output'):
+        os.mkdir('../data/output')
+
     data_dir = os.path.join("../data", args.user)
     output_dir = os.path.join("../data", "output", args.user)
 
