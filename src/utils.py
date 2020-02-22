@@ -6,7 +6,7 @@ import pickle
 import gzip
 import copy
 
-def read(filename):
+def read_one_gzip(filename):
     '''
 
     :param data_path: path to the gzip file
@@ -25,4 +25,6 @@ def read(filename):
 
     return state, next_state, reward, action, terminal
 
+def read_all_gzip(user_dir):
+    pass
 

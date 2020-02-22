@@ -134,7 +134,6 @@ if __name__ == "__main__":
 
         start_time = time.time()
         current_time = 0
-        time_threshold = 30 # seconds
 
         state = env.reset()
         restart = False
