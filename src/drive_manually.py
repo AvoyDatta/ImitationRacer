@@ -12,7 +12,7 @@ from datetime import datetime
 import gzip
 import json
 import time
-
+from tqdm import tqdm
 import copy
 
 '''
@@ -25,6 +25,8 @@ def key_press(k, mod):
     if k == key.UP:    a[1] = +1.0
     if k == key.DOWN:  a[2] = +0.4  # stronger brakes
 '''
+
+ep_len = 60 #length of episdoe in seconds
 
 def key_press(k, mod):
     global restart
@@ -137,50 +139,55 @@ if __name__ == "__main__":
         state = env.reset()
         restart = False
         episode_steps = good_steps
+
         # State loop
-        while True:
-            next_state, r, done, info = env.step(a[:3])
-            episode_reward += r
 
-            episode_samples["state"].append(state)            # state has shape (96, 96, 3)
-            episode_samples["action"].append(np.array(a[:3]))     # action has shape (1, 3)
-            episode_samples["next_state"].append(next_state)
-            episode_samples["reward"].append(r)
-            episode_samples["terminal"].append(done)
+        with tqdm(total = ep_len) as pbar:
+            while True:
+                next_state, r, done, info = env.step(a[:3])
+                episode_reward += r
+
+                episode_samples["state"].append(state)            # state has shape (96, 96, 3)
+                episode_samples["action"].append(np.array(a[:3]))     # action has shape (1, 3)
+                episode_samples["next_state"].append(next_state)
+                episode_samples["reward"].append(r)
+                episode_samples["terminal"].append(done)
+                
+                state = next_state
+                episode_steps += 1
+
+                if episode_steps % 1000 == 0 or done:
+                    print("\nstep {}".format(episode_steps))
+
+                env.render()
+                # break
+                pbar.update(time.time() - current_time)
+
+                current_time = time.time()
+                delta_time = current_time - start_time
+
+                # print('Time delta is: ', delta_time)
+                if done or restart or delta_time >= ep_len:
+                    print(delta_time)
+                    break
+
+                # if done or restart:
+                #     break
             
-            state = next_state
-            episode_steps += 1
+            if not restart:
+                good_steps = episode_steps
 
-            if episode_steps % 1000 == 0 or done:
-                print("\nstep {}".format(episode_steps))
+                episode_rewards.append(episode_reward)
+                
+                good_samples["state"].append(episode_samples["state"])
+                good_samples["action"].append(episode_samples["action"])
+                good_samples["next_state"].append(episode_samples["next_state"])
+                good_samples["reward"].append(episode_samples["reward"])
+                good_samples["terminal"].append(episode_samples["terminal"])
 
-            env.render()
-            # break
-
-            current_time = time.time()
-            delta_time = current_time - start_time
-            print('Time delta is: ', delta_time)
-            if done or restart or delta_time >= 30. :
-                print(delta_time)
-                break
-
-            # if done or restart:
-            #     break
-        
-        if not restart:
-            good_steps = episode_steps
-
-            episode_rewards.append(episode_reward)
-            
-            good_samples["state"].append(episode_samples["state"])
-            good_samples["action"].append(episode_samples["action"])
-            good_samples["next_state"].append(episode_samples["next_state"])
-            good_samples["reward"].append(episode_samples["reward"])
-            good_samples["terminal"].append(episode_samples["terminal"])
-
-            print('... saving data')
-            store_data(good_samples, data_dir)
-            save_output(episode_rewards, output_dir)
+                print('... saving data')
+                store_data(good_samples, data_dir)
+                save_output(episode_rewards, output_dir)
 
     env.close()
 
