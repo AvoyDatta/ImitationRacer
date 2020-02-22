@@ -11,6 +11,7 @@ import os
 from datetime import datetime
 import gzip
 import json
+import time
 
 import copy
 
@@ -128,6 +129,11 @@ if __name__ == "__main__":
         episode_samples["reward"] = []
         episode_samples["terminal"] = []
         episode_reward = 0
+
+        start_time = time.time()
+        current_time = 0
+        time_threshold = 30 # seconds
+
         state = env.reset()
         restart = False
         episode_steps = good_steps
@@ -150,8 +156,16 @@ if __name__ == "__main__":
 
             env.render()
             # break
-            if done or restart: 
+
+            current_time = time.time()
+            delta_time = current_time - start_time
+            print('Time delta is: ', delta_time)
+            if done or restart or delta_time >= 30. :
+                print(delta_time)
                 break
+
+            # if done or restart:
+            #     break
         
         if not restart:
             good_steps = episode_steps
