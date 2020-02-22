@@ -14,7 +14,6 @@ import json
 
 import copy
 
-
 '''
 def key_press(k, mod):
     global restart
@@ -63,7 +62,7 @@ def store_data(data, datasets_dir="../data"):
     # save data
     if not os.path.exists(datasets_dir):
         os.mkdir(datasets_dir)
-    data_file = os.path.join(datasets_dir, 'data.pkl.gzip')
+    data_file = os.path.join(datasets_dir, 'data_{}.pkl.gzip'.format(datetime.now().strftime("%Y%m%d-%H%M%S")))
     f = gzip.open(data_file,'wb')
     pickle.dump(data, f)
 
