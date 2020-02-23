@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 # My packages and modules:
 from agent import Agent
 import utils
+import pdb
 
 data_path = '../data/avoy/'
 ckpt_path = '../ckpts/'
@@ -13,8 +14,9 @@ def read_data():
     # TODO: Fix the file thing
     print("Reading data...")
     all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
-    X = utils.vstack(all_states[-1])
-    y = utils.vstack(all_actions[-1])
+    X = utils.vstack(all_states)
+    y = utils.vstack(all_actions)
+    pdb.set_trace()
     return X, y
 
 # def read_data():
