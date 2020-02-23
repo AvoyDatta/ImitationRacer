@@ -163,6 +163,7 @@ import pickle
 import gzip
 import glob
 import copy
+import os
 
 def read_one_gzip(filename):
     '''
