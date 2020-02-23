@@ -60,14 +60,22 @@ def read_all_gzip(user_dir):
     all_files = sorted(glob.glob(user_dir + '*.gzip'))
 
     # empty lists for all
-    all_states = []
-    all_next_states = []
+    all_states = [] #list of sessions
+    all_next_states = [] 
     all_rewards = []
     all_actions = []
     all_terminals = []
 
     for file in all_files:
         state, next_state, reward, action, terminal = read_one_gzip(file)
+        #state, next_state ... list of episodes (all stored as lists)
+
+        state = np.concatenate([np.array(ep) for ep in state], 0)
+        next_state = np.concatenate([np.array(ep) for ep in next_state], 0)
+        action = np.concatenate([np.array(ep) for ep in action], 0)
+        reward = np.concatenate([np.array(ep) for ep in reward], 0)
+        terminal = np.concatenate([np.array(ep) for ep in terminal], 0)
+
         all_states.append(state)
         all_next_states.append(next_state)
         all_rewards.append(reward)
