@@ -10,11 +10,14 @@ import pdb
 data_path = '../data/one/'
 ckpt_path = '../ckpts/'
 
-def read_data():
+def read_data(use_last):
     # TODO: Fix the file thing
     print("Reading data...")
     all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
-    pdb.set_trace()
+
+    if use_last:
+        all_states = all_states[-1]
+        all_actions = all_actions[-1]
 
     X = utils.vstack(all_states)
     y = utils.vstack(all_actions)
