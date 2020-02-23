@@ -7,7 +7,7 @@ from agent import Agent
 import utils
 import pdb
 
-data_path = '../data/avoy/'
+data_path = '../data/one/'
 ckpt_path = '../ckpts/'
 
 def read_data():
