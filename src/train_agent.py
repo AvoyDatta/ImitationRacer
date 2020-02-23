@@ -14,9 +14,11 @@ def read_data():
     # TODO: Fix the file thing
     print("Reading data...")
     all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
+    pdb.set_trace()
+
     X = utils.vstack(all_states)
     y = utils.vstack(all_actions)
-    pdb.set_trace()
+
     return X, y
 
 # def read_data():
