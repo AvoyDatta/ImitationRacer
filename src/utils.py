@@ -22,6 +22,63 @@ actions = np.array([
 ], dtype=np.float32)
 n_actions = len(actions)
 
+
+def read_one_gzip(filename):
+    '''
+
+    :param data_path: path to the gzip file
+    :return: state, next_state, reward, action, terminal
+    '''
+    if not os.path.exists(filename):
+        raise Exception("File {0} does not exist".format(filename))
+
+    file_handler = gzip.open(filename, 'rb')
+    data = pickle.load(file_handler)
+    state = data['state']
+    next_state = data['next_state']
+    reward = data['reward']
+    action = data['action']
+    terminal = data['terminal']
+
+    return state, next_state, reward, action, terminal
+
+def read_one_json(filename):
+    '''
+
+    :param filename: path to json file
+    :return: number of episodes with episode rewards
+    '''
+
+    pass
+
+def read_all_gzip(user_dir):
+    '''
+
+    :param user_dir: path to user directory
+    :return: 5 lists for state, next_state, reward, action, terminal with all of users data
+    '''
+    all_files = sorted(glob.glob(user_dir + '*.gzip'))
+
+    # empty lists for all
+    all_states = []
+    all_next_states = []
+    all_rewards = []
+    all_actions = []
+    all_terminals = []
+
+    for file in all_files:
+        state, next_state, reward, action, terminal = read_one_gzip(file)
+        all_states.append(state)
+        all_next_states.append(next_state)
+        all_rewards.append(reward)
+        all_actions.append(action)
+        all_terminals.append(terminal)
+
+    return all_states, all_next_states, all_rewards, all_actions, all_terminals
+
+
+
+
 def action_arr2id(arr):
     """ Converts action from the array format to an id (ranging from 0 to n_actions) """
     ids = []
@@ -164,58 +221,4 @@ import gzip
 import glob
 import copy
 import os
-
-def read_one_gzip(filename):
-    '''
-
-    :param data_path: path to the gzip file
-    :return: state, next_state, reward, action, terminal
-    '''
-    if not os.path.exists(filename):
-        raise Exception("File {0} does not exist".format(filename))
-
-    file_handler = gzip.open(filename, 'rb')
-    data = pickle.load(file_handler)
-    state = data['state']
-    next_state = data['next_state']
-    reward = data['reward']
-    action = data['action']
-    terminal = data['terminal']
-
-    return state, next_state, reward, action, terminal
-
-def read_one_json(filename):
-    '''
-
-    :param filename: path to json file
-    :return: number of episodes with episode rewards
-    '''
-
-    pass
-
-def read_all_gzip(user_dir):
-    '''
-
-    :param user_dir: path to user directory
-    :return: 5 lists for state, next_state, reward, action, terminal with all of users data
-    '''
-    all_files = glob.glob(user_dir + '*.gzip')
-
-    # empty lists for all
-    all_states = []
-    all_next_states = []
-    all_rewards = []
-    all_actions = []
-    all_terminals = []
-
-    for file in all_files:
-        state, next_state, reward, action, terminal = read_one_gzip(file)
-        all_states.append(state)
-        all_next_states.append(next_state)
-        all_rewards.append(reward)
-        all_actions.append(action)
-        all_terminals.append(terminal)
-
-    return all_states, all_next_states, all_rewards, all_actions, all_terminals
-
 

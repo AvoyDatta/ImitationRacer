@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 from agent import Agent
 import utils
 
+data_path = '../data/avoy/'
+ckpt_path = '../ckpts/'
 
 def read_data():
     # TODO: Fix the file thing
     print("Reading data...")
-    all_states, _, _, all_actions, _ = utils.read_all_gzip('../../../ImitationRacer/data/adi/')
+    all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
     X = utils.vstack(all_states[-1])
     y = utils.vstack(all_actions[-1])
     return X, y
@@ -81,5 +83,5 @@ if __name__ == "__main__":
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100)
     # Save it to file:
-    agent.save('saved_models/')
+    agent.save(ckpt_path)
  
