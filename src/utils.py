@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import gzip
 import copy
+import os
 
 def read_one_gzip(filename):
     '''
@@ -12,7 +13,7 @@ def read_one_gzip(filename):
     :param data_path: path to the gzip file
     :return: state, next_state, reward, action, terminal
     '''
-    if not exists(filename):
+    if not os.path.exists(filename):
         raise Exception("File {0} does not exist".format(filename))
 
     file_handler = gzip.open(filename, 'rb')

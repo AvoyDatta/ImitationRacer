@@ -61,11 +61,15 @@ def key_release(k, mod):
         a[2] = 0.0
 
 
-def store_data(data, datasets_dir="../data"):
+def store_data(data, datasets_dir="../data", timestamp = None):
     # save data
     if not os.path.exists(datasets_dir):
         os.mkdir(datasets_dir)
-    data_file = os.path.join(datasets_dir, 'data_{}.pkl.gzip'.format(datetime.now().strftime("%Y%m%d-%H%M%S")))
+    if timestamp is None:
+        save_name = 'data.pkl.gzip'
+    else:
+        save_name = 'data_{}.pkl.gzip'.format(timestamp)
+    data_file = os.path.join(datasets_dir, save_name)
     f = gzip.open(data_file,'wb')
     pickle.dump(data, f)
 
@@ -124,6 +128,7 @@ if __name__ == "__main__":
     episode_rewards = []
     good_steps = episode_steps = 0
     # Episode loop
+    start_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     while True:
         episode_samples["state"] = []
         episode_samples["action"] = []
@@ -185,7 +190,7 @@ if __name__ == "__main__":
                 good_samples["terminal"].append(episode_samples["terminal"])
 
                 print('... saving data')
-                store_data(good_samples, data_dir)
+                store_data(good_samples, data_dir, start_timestamp)
                 save_output(episode_rewards, output_dir)
 
     env.close()
