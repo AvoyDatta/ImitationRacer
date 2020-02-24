@@ -64,7 +64,7 @@ def read_all_gzip(user_dir):
     :param user_dir: path to user directory
     :return: 5 lists for state, next_state, reward, action, terminal with all of users data
     '''
-    all_files = sorted(glob.glob(user_dir + '*.gzip'))
+    all_files = sorted(glob.glob(user_dir + '/*.gzip'))
 
     # empty lists for all
     all_states = [] #list of sessions

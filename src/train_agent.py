@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     ckpt_path = os.path.join(ckpt_path, args.user)
     data_path = os.path.join(data_path, args.user)
-
+    pdb.set_trace()
     X, y = read_data(data_path)
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
     # Plot action histogram. JUST FOR DEBUGGING.

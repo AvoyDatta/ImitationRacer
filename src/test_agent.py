@@ -9,7 +9,7 @@ import utils
 import argparse
 
 ckpt_dir = '../ckpts/'
-results_dir = 'performance_results/'
+results_dir = '../results/'
 
 def run_episode(env, agent, rendering=True, max_timesteps=1000):
     # Reset reward accumulator
@@ -53,9 +53,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     user_path = os.path.join(ckpt_dir, args.user)
-    saved_path = os.path.join(user_path, get_model_path(user_path, metric='best'))
+    saved_path = os.path.join(user_path, utils.get_model_path(user_path, metric='best'))
 
-    results_path = os.path.join(results_dir, user)
+    results_path = os.path.join(results_dir, args.user)
     if not os.path.exists(results_path):
         os.mkdir(results_path)
 
