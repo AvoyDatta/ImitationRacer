@@ -6,6 +6,10 @@ import gym, os, json
 # My packages and modules:
 from agent import Agent
 import utils
+import argparse
+
+ckpt_dir = '../ckpts/'
+results_dir = 'performance_results/'
 
 def run_episode(env, agent, rendering=True, max_timesteps=1000):
     # Reset reward accumulator
@@ -42,12 +46,25 @@ def save_performance_results(episode_rewards, directory):
 
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
+
+    args = parser.parse_args()
+
+    user_path = os.path.join(ckpt_dir, args.user)
+    saved_path = os.path.join(user_path, get_model_path(user_path, metric='best'))
+
+    results_path = os.path.join(results_dir, user)
+    if not os.path.exists(results_path):
+        os.mkdir(results_path)
+
     # Number of episodes to test:
     n_test_episodes =3 #15
 
     # Initialize environment and agent:
     env = gym.make('CarRacing-v0').unwrapped
-    agent = Agent.from_file('saved_models/')
+    agent = Agent.from_file(saved_path)
 
     # Episodes loop:
     episode_rewards = []
@@ -57,6 +74,7 @@ if __name__ == "__main__":
         print(f'Episode {i+1} reward:{episode_reward:.2f}')
     env.close()
 
+
     # save reward statistics in a .json file
-    save_performance_results(episode_rewards, 'performance_results/')
+    save_performance_results(episode_rewards, results_path)
     print('... finished')

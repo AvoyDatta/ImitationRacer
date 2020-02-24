@@ -10,7 +10,7 @@ import pdb
 data_path = '../data/one/'
 ckpt_path = '../ckpts/'
 
-def read_data(use_last):
+def read_data(use_last = False):
     # TODO: Fix the file thing
     print("Reading data...")
     all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
