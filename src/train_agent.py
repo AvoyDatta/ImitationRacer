@@ -8,9 +8,11 @@ import utils
 import pdb
 import argparse
 
+random_seed = 10
 data_path = '../data/'
 ckpt_path = '../ckpts/'
 save_every = 1000
+np.random.seed(seed=random_seed)
 
 def read_data(data_path, use_last = False):
     # TODO: Fix the file thing
@@ -44,9 +46,16 @@ def preprocess_data(X, y, hist_len, shuffle):
     X_pp, y_pp = utils.stack_history(X_pp, y_pp, hist_len, shuffle=shuffle)
     return X_pp, y_pp
 
-def split_data(X, y, frac = 0.1):
+def split_data(X, y, frac = 0.1, shuffle = True):
     """ Splits data into training and validation set """
     split = int((1-frac) * len(y))
+
+    if shuffle:
+        idxs = np.arange(len(X))
+        np.random.shuffle(idxs)
+        X = X[idxs]
+        y = y[idxs]
+
     X_train, y_train = X[:split], y[:split]
     X_valid, y_valid = X[split:], y[split:]
     return X_train, y_train, X_valid, y_valid
@@ -84,6 +93,7 @@ if __name__ == "__main__":
     # pdb.set_trace()
     X, y = read_data(data_path)
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
+
     # Plot action histogram. JUST FOR DEBUGGING.
     if True: plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
     # Balance samples. Gets hide of 50% of the most common action (accelerate)

@@ -74,7 +74,7 @@ def store_data(data, datasets_dir="../data", timestamp = None):
     pickle.dump(data, f)
 
 
-def save_output(episode_rewards, output_dir="../data/"):
+def save_output(episode_rewards, output_dir="../data/", timestamp = None):
     # save output
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
@@ -87,7 +87,12 @@ def save_output(episode_rewards, output_dir="../data/"):
     output["mean_all_episodes"] = np.array(episode_rewards).mean()
     output["std_all_episodes"] = np.array(episode_rewards).std()
  
-    fname = os.path.join(output_dir, "results_manually-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S"))
+    # fname = os.path.join(output_dir, "results_manually-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S"))
+    if timestamp is None:
+        save_name = "results_manually.json"
+    else:
+        save_name = "results_manually-%s.json".format(timestamp)
+    fname = os.path.join(output_dir, save_name)
     fh = open(fname, "w")
     json.dump(output, fh)
     print('... finished')
