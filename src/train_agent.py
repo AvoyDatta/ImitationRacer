@@ -10,6 +10,7 @@ import argparse
 
 data_path = '../data/'
 ckpt_path = '../ckpts/'
+save_every = 1000
 
 def read_data(data_path, use_last = False):
     # TODO: Fix the file thing
@@ -80,7 +81,7 @@ if __name__ == "__main__":
 
     ckpt_path = os.path.join(ckpt_path, args.user)
     data_path = os.path.join(data_path, args.user)
-    pdb.set_trace()
+    # pdb.set_trace()
     X, y = read_data(data_path)
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
     # Plot action histogram. JUST FOR DEBUGGING.
@@ -98,7 +99,7 @@ if __name__ == "__main__":
     agent = Agent.from_scratch(n_channels=utils.history_length)
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
-                ckpt_step=100,
+                ckpt_step=save_every,
                 ckpt_path = ckpt_path) # added more arguments
 
     # Save it to file:
