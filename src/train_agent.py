@@ -8,16 +8,16 @@ import utils
 import pdb
 
 data_path = '../data/one/'
-ckpt_path = '../ckpts/'
+ckpt_path = '../ckpts/one/'
 
-def read_data(use_last):
+def read_data(use_last = False):
     # TODO: Fix the file thing
     print("Reading data...")
     all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
 
     if use_last:
-        all_states = all_states[-1]
-        all_actions = all_actions[-1]
+        all_states = all_states[-1:]
+        all_actions = all_actions[-1:]
 
     X = utils.vstack(all_states)
     y = utils.vstack(all_actions)
@@ -71,7 +71,7 @@ def plot_action_histogram(actions, title):
 
 if __name__ == "__main__":
     # Read data:
-    X, y = read_data()
+    X, y = read_data(use_last = True)
     # Preprocess it:
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
     # Plot action histogram. JUST FOR DEBUGGING.
@@ -88,7 +88,9 @@ if __name__ == "__main__":
     # Create a new agent from scratch:
     agent = Agent.from_scratch(n_channels=utils.history_length)
     # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100)
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
+                ckpt_step=100,
+                ckpt_path = ckpt_path)
     # Save it to file:
     agent.save(ckpt_path)
  

@@ -34,12 +34,12 @@ class Agent:
     
     @classmethod  # Constructor to load a model from a file
     def from_file(cls, file_name):
-        model = mnn.models.Classifier_From_File('saved_models/')
+        model = mnn.models.Classifier_From_File('../ckpts/')#('saved_models/')
         return Agent(model)
 
-    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step):
+    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path):
         print("Training model")
-        self.model.train(X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step)
+        self.model.train(X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path)
 
     def begin_new_episode(self, state0):
         # A history of the last n agent's actions

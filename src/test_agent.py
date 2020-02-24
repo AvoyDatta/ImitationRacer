@@ -7,6 +7,8 @@ import gym, os, json
 from agent import Agent
 import utils
 
+ckpt_path = '../ckpts/one/0.588_20200223-164002/'
+
 def run_episode(env, agent, rendering=True, max_timesteps=1000):
     # Reset reward accumulator
     episode_reward = 0
@@ -47,7 +49,7 @@ if __name__ == "__main__":
 
     # Initialize environment and agent:
     env = gym.make('CarRacing-v0').unwrapped
-    agent = Agent.from_file('saved_models/')
+    agent = Agent.from_file(ckpt_path)#('saved_models/')
 
     # Episodes loop:
     episode_rewards = []
