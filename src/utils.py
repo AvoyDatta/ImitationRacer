@@ -42,6 +42,13 @@ def read_one_gzip(filename):
 
     return state, next_state, reward, action, terminal
 
+def get_model_path(save_dir, metric='best'):
+    if metric == 'best':
+        path = sorted(list([entry.name for entry in os.scandir(save_dir)]))[::-1][0]
+    elif metric == 'recent':
+        path = sorted(list([entry.name.split('_')[1] for entry in os.scandir(save_dir)]))[::-1][0]
+    return path 
+
 def read_one_json(filename):
     '''
 
