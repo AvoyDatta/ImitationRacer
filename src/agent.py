@@ -6,6 +6,8 @@ import abc
 import utils
 import my_neural_network as mnn
 
+
+
 class Agent:
     # Constructor is "overloaded" by the functions bellow.
     def __init__(self, model):
@@ -34,7 +36,7 @@ class Agent:
     
     @classmethod  # Constructor to load a model from a file
     def from_file(cls, file_name):
-        model = mnn.models.Classifier_From_File('../ckpts/')#('saved_models/')
+        model = mnn.models.Classifier_From_File(file_name)#('saved_models/')
         return Agent(model)
 
     def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path):
