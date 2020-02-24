@@ -90,7 +90,7 @@ if __name__ == "__main__":
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
                 ckpt_step=100,
-                ckpt_path = ckpt_path)
+                ckpt_path = ckpt_path) # added more arguments
     # Save it to file:
     agent.save(ckpt_path)
  
