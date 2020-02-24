@@ -3,6 +3,10 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.python.saved_model import tag_constants
 import shutil, os, time
+from datetime import datetime
+import pdb
+
+tensorboard_path = "../tensorboard_data/"
 
 if __name__ == "__main__":
     from layers import Layer
@@ -50,7 +54,8 @@ class Classifier_From_Layers:
         self.summ_valid = tf.summary.scalar('Validation accuracy', self.accuracy)
 
 
-    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step=100):
+    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step=100,
+              ckpt_step=1e4, ckpt_path=None):
         optimizer = tf.train.AdamOptimizer(learning_rate=lr)
         #optimizer = tf.train.MomentumOptimizer(lr, 0.9, use_nesterov=True)
         train_op = optimizer.minimize(self.loss_fn)
@@ -58,7 +63,7 @@ class Classifier_From_Layers:
         self.sess.run(init)
         # Setup a writter for tensorboard summaries
         timestr = time.strftime("%Y%m%d-%H%M%S") + '/'
-        writer = tf.summary.FileWriter('tensorboard_data/' + timestr, self.sess.graph)
+        writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)
         # Training loop:
         for step in range(n_batches):
             # Sample training data
@@ -78,6 +83,26 @@ class Classifier_From_Layers:
                     feed_dict={self.input: X_valid, self.labels: y_valid, self.train_mode: False})
                 writer.add_summary(summ, step)
                 print(f'Step: {step}, Loss: {loss:.5f}, Training accuracy: {train_acc:.4f}, Validation accuracy: {val_acc:.4f}')
+
+            if step % ckpt_step ==0:
+
+                # Validation statistics
+                val_acc, summ = self.sess.run([self.accuracy, self.summ_valid],
+                                              feed_dict={self.input: X_valid, self.labels: y_valid,
+                                                         self.train_mode: False})
+                #writer.add_summary(summ, step)
+
+                ## save model as ValAcc_timeStamp
+                # create string_name
+                current_time = datetime.now().strftime("%Y%m%d-%H%M%S")
+                val_string = str(round(val_acc, 3))
+                if not os.path.exists(ckpt_path):
+                    os.mkdir(ckpt_path)
+                new_path = val_string + "_" + current_time
+                #pdb.set_trace()
+                print('Saving Model\n')
+                self.save(os.path.join(ckpt_path, new_path))
+
         writer.close()
         print("Training finished.")
 
