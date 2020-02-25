@@ -1,9 +1,22 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import multiprocessing as mp
 from skimage.color import rgb2gray
 from skimage import filters
 import os
+import json
+
+import argparse
+import numpy as np
+import pickle
+import gzip
+import glob
+import copy
+import os
+import pandas as pd
+
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
 history_length = 1
@@ -22,6 +35,44 @@ actions = np.array([
 ], dtype=np.float32)
 n_actions = len(actions)
 
+def read_json(json_path):
+    """
+    Reads json, outputs dict 
+    """
+    with open(json_path, 'r') as fp:
+        results = json.load(fp)
+        print(results.keys())
+    return results
+
+def comparison_histogram(save_path, expert_json, agent_json):
+    """
+    Plot histogram of score distribution for a user 
+    """
+    agent = read_json(agent_json)
+    expert = read_json(expert_json)
+    # agent_rewards = np.expand_dims(np.array(agent["episode_rewards"]), 1)
+    # expert_rewards = np.expand_dims(np.array(expert["episode_rewards"]), 1)
+    agent_rewards = np.array(agent["episode_rewards"])
+    expert_rewards = np.array(expert["episode_rewards"])
+    # data = np.concatenate((expert_rewards, agent_rewards), 1)
+    means = (expert['mean_all_episodes'], agent['mean'])
+    stdevs = (expert['std_all_episodes'], agent['std'])
+
+    # print(type(data[0,0]))
+    # dist = pd.DataFrame(data, columns=['expert', 'agent'])
+
+    # fig, ax = plt.subplots()
+    # dist.plot.kde(ax=ax, legend=False, title='Histogram: Expert vs. Agent')
+    plt.hist(expert_rewards, color='salmon', bins=5, label='expert', alpha=.75)
+    plt.hist(agent_rewards, color='royalblue', bins=5, label='agent', alpha=.75)
+    plt.legend()
+    plt.ylabel("Episodes"); plt.xlabel('Episode Rewards')
+    # dist.plot.hist(ax=ax)
+    # ax.set_ylabel('Probability')
+    # ax.grid(axis='y')
+
+    plt.savefig(save_path)
+    # ax.set_facecolor('#d8dcd6')
 
 def read_one_gzip(filename):
     '''
@@ -49,14 +100,6 @@ def get_model_path(save_dir, metric='best'):
         path = sorted(list([entry.name.split('_')[1] for entry in os.scandir(save_dir)]))[::-1][0]
     return path 
 
-def read_one_json(filename):
-    '''
-
-    :param filename: path to json file
-    :return: number of episodes with episode rewards
-    '''
-
-    pass
 
 def read_all_gzip(user_dir):
     '''
@@ -227,13 +270,7 @@ def vstack(arr):
         stack = np.vstack((stack, arr[i][dead_start:]))
     return stack
 
-# Some helper functions to deal
 
-import argparse
-import numpy as np
-import pickle
-import gzip
-import glob
-import copy
-import os
-
+if __name__ == "__main__":
+    # print(read_json("../results/avoy/results_bc_agent-20200225-135131.json"))
+    comparison_histogram('histogram.png', "../data/output/avoy/results_manually-20200222-153407.json", "../results/avoy/results_bc_agent-20200225-135131.json")

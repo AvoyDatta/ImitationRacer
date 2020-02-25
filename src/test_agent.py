@@ -49,6 +49,7 @@ def save_performance_results(episode_rewards, directory):
     
     time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     fname = f"{directory}results_bc_agent-{time_stamp}.json"
+    fname = os.path.join(directory, "results_bc_agent-{}.json".format(time_stamp))
     with open(fname, "w") as fh:
         json.dump(results, fh)
 
@@ -57,13 +58,14 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
-    parser.add_argument("--eps", type=int, default=1, help="Insert number of episodes to run.")
+    parser.add_argument("--eps", type=int, default=15, help="Insert number of episodes to run.")
 
     args = parser.parse_args()
 
     user_path = os.path.join(ckpt_dir, args.user)
     saved_path = os.path.join(user_path, utils.get_model_path(user_path, metric='best'))
 
+    print("Loading model from {}".format(saved_path))
     results_path = os.path.join(results_dir, args.user)
     if not os.path.exists(results_path):
         os.mkdir(results_path)
@@ -86,4 +88,5 @@ if __name__ == "__main__":
 
     # save reward statistics in a .json file
     save_performance_results(episode_rewards, results_path)
+    print("Saving results to {}".format(results_path))
     print('... finished')
