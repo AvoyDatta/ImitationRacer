@@ -7,9 +7,12 @@ import gym, os, json
 from agent import Agent
 import utils
 import argparse
+import time 
 
 ckpt_dir = '../ckpts/'
 results_dir = '../results/'
+ep_len = 60 #length of episdoe in seconds
+
 
 def run_episode(env, agent, rendering=True, max_timesteps=1000):
     # Reset reward accumulator
@@ -18,6 +21,9 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
     env_state = env.reset()
     agent.begin_new_episode(state0=env_state)
 
+
+    start_time = time.time()
+    current_time = 0
     for _ in range(max_timesteps):
         # Request action from agent:
         agent_action = agent.get_action(env_state)
@@ -29,7 +35,9 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
         # Accumulate reward
         episode_reward += r
         # Check if environment signaled the end of the episode:
-        if done: break
+        current_time = time.time()
+        delta_time = current_time - start_time
+        if done or delta_time >= ep_len: break
 
     return episode_reward
 
