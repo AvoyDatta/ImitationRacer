@@ -49,6 +49,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
+    parser.add_argument("--eps", type=int, default=1, help="Insert number of episodes to run.")
 
     args = parser.parse_args()
 
@@ -60,7 +61,7 @@ if __name__ == "__main__":
         os.mkdir(results_path)
 
     # Number of episodes to test:
-    n_test_episodes =3 #15
+    n_test_episodes = args.eps #15
 
     # Initialize environment and agent:
     env = gym.make('CarRacing-v0').unwrapped
