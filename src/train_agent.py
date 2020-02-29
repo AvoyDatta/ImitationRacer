@@ -10,7 +10,7 @@ import argparse
 
 random_seed = 10
 data_path = '../data/'
-ckpt_path = '../ckpts/'
+ckpt_dir = '../ckpts/'
 save_every = 1000
 np.random.seed(seed=random_seed)
 
@@ -88,21 +88,23 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    ckpt_path = os.path.join(ckpt_path, args.user)
-    data_path = os.path.join(data_path, args.user)
+    ckpt_path = os.path.join(ckpt_dir, args.user, utils.curr_time())
+    if not os.path.exists(ckpt_path):
+        os.mkdir(ckpt_path)
+
     # pdb.set_trace()
     X, y = read_data(data_path)
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
 
     # Plot action histogram. JUST FOR DEBUGGING.
-    if True: plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
+    plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
     # Balance samples. Gets hide of 50% of the most common action (accelerate)
     X_pp, y_pp = utils.balance_actions(X_pp, y_pp, 0.5)
     # Plot action histogram. JUST FOR DEBUGGING.
-    if True: plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
+    plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
     # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
     # Requires to run the above fucntion with hist_len=1, shuffle=False.
-    if False: plot_states(X_pp, X)
+    plot_states(X_pp, X)
     # Split data into training and validation:
     X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1)
     # Create a new agent from scratch:

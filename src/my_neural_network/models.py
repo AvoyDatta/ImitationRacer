@@ -13,6 +13,7 @@ if __name__ == "__main__":
 else:
     from my_neural_network.layers import Layer    
 
+import utils
 
 class Classifier_From_Layers:
     """ 
@@ -62,7 +63,7 @@ class Classifier_From_Layers:
         init = tf.global_variables_initializer()
         self.sess.run(init)
         # Setup a writter for tensorboard summaries
-        timestr = time.strftime("%Y%m%d-%H%M%S") + '/'
+        timestr = utils.curr_time() + '/'
         writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)
         # Training loop:
         for step in range(n_batches):
@@ -94,7 +95,7 @@ class Classifier_From_Layers:
 
                 ## save model as ValAcc_timeStamp
                 # create string_name
-                current_time = datetime.now().strftime("%Y%m%d-%H%M%S")
+                current_time = utils.curr_time()
                 val_string = str(round(val_acc, 3))
                 if not os.path.exists(ckpt_path):
                     os.mkdir(ckpt_path)

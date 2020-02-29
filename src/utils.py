@@ -16,6 +16,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
+import datetime
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
@@ -270,7 +271,12 @@ def vstack(arr):
         stack = np.vstack((stack, arr[i][dead_start:]))
     return stack
 
+def curr_time():
+    return datetime.now().strftime("%Y%m%d-%H%M%S")
 
 if __name__ == "__main__":
     # print(read_json("../results/avoy/results_bc_agent-20200225-135131.json"))
-    comparison_histogram('histogram.png', "../data/output/avoy/results_manually-20200222-153407.json", "../results/avoy/results_bc_agent-20200225-135131.json")
+
+    comparison_histogram('histo.png', "../results_json/results_manually-20200223-175929.json", "../results_json/oneresults_bc_agent-20200225-134707.json")
+
+
