@@ -9,7 +9,7 @@ import pdb
 import argparse
 
 random_seed = 10
-data_path = '../data/'
+data_dir = '../data/'
 ckpt_dir = '../ckpts/'
 save_every = 1000
 np.random.seed(seed=random_seed)
@@ -87,12 +87,12 @@ if __name__ == "__main__":
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
 
     args = parser.parse_args()
-
     ckpt_path = os.path.join(ckpt_dir, args.user, utils.curr_time())
     if not os.path.exists(ckpt_path):
         os.mkdir(ckpt_path)
 
     # pdb.set_trace()
+    data_path = os.path.join(data_dir, args.user)
     X, y = read_data(data_path)
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
 
