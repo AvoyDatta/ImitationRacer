@@ -98,6 +98,6 @@ class LSTMCell(Layer):
             last = tf.gather(val, int(val.get_shape()[0]) - 1)
             self.w = tf.Variable(tf.truncated_normal([self.num_hidden, self.num_classes]))
             self.b = tf.Variable(tf.constant(0.1, shape=[self.num_classes]))
-            self.out = tf.matmul(tf.matmul(last, self.w) + self.b)
+            self.out = tf.matmul(last, self.w) + self.b
 
 
