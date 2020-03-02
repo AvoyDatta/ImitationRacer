@@ -18,20 +18,45 @@ class Agent:
 
 
     @classmethod  # Constructor for a brand new model
-    def from_scratch(cls, n_channels):
-        layers = [
-            mnn.layers.Input(input_shape=[96, 96, n_channels]), 
-            mnn.layers.Conv2d(filters=16, kernel_size=5, stride=4), 
-            mnn.layers.ReLU(), 
-            mnn.layers.Dropout(drop_probability=0.5),
-            mnn.layers.Conv2d(filters=32, kernel_size=3, stride=2), 
-            mnn.layers.ReLU(), 
-            mnn.layers.Dropout(drop_probability=0.5),
-            mnn.layers.Flatten(), 
-            mnn.layers.Linear(n_units=128), 
-            mnn.layers.Linear(n_units=utils.n_actions), 
-        ]
-        model = mnn.models.Classifier_From_Layers(layers)
+    def from_scratch(cls, n_channels, model='baseline', config=None):
+
+        if model == 'baseline':
+            layers = [
+                mnn.layers.Input(input_shape=[96, 96, n_channels]), 
+                mnn.layers.Conv2d(filters=16, kernel_size=5, stride=4), 
+                mnn.layers.ReLU(), 
+                mnn.layers.Dropout(drop_probability=0.5),
+                mnn.layers.Conv2d(filters=32, kernel_size=3, stride=2), 
+                mnn.layers.ReLU(), 
+                mnn.layers.Dropout(drop_probability=0.5),
+                mnn.layers.Flatten(), 
+                mnn.layers.Linear(n_units=128), 
+                mnn.layers.Linear(n_units=utils.n_actions) 
+            ]
+        else:
+            layers = [             
+                mnn.layers.Input(input_shape=[96, 96, n_channels]),
+
+                mnn.layers.Reshape(shape=[96, 96]), 
+                mnn.layers.Conv2d(filters=16, kernel_size=5, stride=4), 
+                mnn.layers.ReLU(), 
+                tf.layers.BatchNormalization(),
+                # mnn.layers.Dropout(drop_probability=0.5),
+                mnn.layers.Conv2d(filters=32, kernel_size=3, stride=2), 
+                mnn.layers.ReLU(), 
+                # mnn.layers.Dropout(drop_probability=0.5),
+                tf.layers.BatchNormalization()
+                mnn.layers.Flatten(), 
+                mnn.layers.Linear(n_units=config['lstm_inp_dim']),
+
+                mnn.layers.Reshape(shape=[config["history_length"], config['lstm_inp_dim']]), 
+
+                ## RNN Layer
+                mnn.layers.LSTMCell(config['lstm_hidden'], num_classes=config['num_classes'])
+                #(N, n_actions)
+
+            ]        
+            model = mnn.models.Classifier_From_Layers(layers)
         return Agent(model)
     
     @classmethod  # Constructor to load a model from a file

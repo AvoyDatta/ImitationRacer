@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 # My packages and modules:
 from agent import Agent
 import utils
+from utils import config
 import pdb
 import argparse
 
@@ -12,7 +13,9 @@ random_seed = 10
 data_dir = '../data/'
 ckpt_dir = '../ckpts/'
 save_every = 1000
-np.random.seed(seed=random_seed)
+np.random.seed(seed=random_seed)cd 
+
+
 
 def read_data(data_path, use_last = False):
     # TODO: Fix the file thing

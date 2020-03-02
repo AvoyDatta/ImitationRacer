@@ -21,6 +21,8 @@ import datetime
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
 history_length = 1
+
+
 # Number of first states of each episode that shall be ignored
 # from the expert dataset:
 dead_start = 50
@@ -35,6 +37,16 @@ actions = np.array([
     [-1.0, 0.0, 0.0],  # LEFT
 ], dtype=np.float32)
 n_actions = len(actions)
+
+
+
+config = {
+    'lstm_inp_dim':128,
+    'history_length':history_length,
+    'lstm_hidden': 128,
+    'num_classes': n_actions
+}
+
 
 def read_json(json_path):
     """

@@ -63,6 +63,16 @@ class Flatten(Layer):
         features = reduce(lambda a, b: a * b, inp_shape[1:])
         self.out = tf.reshape(x, shape=[-1, features], name='Flatten')
 
+class Reshape(Layer):
+    def __init__(self, shape):
+        super().__init__()
+        self.shape = shape #Shape AFTER zeroth dim
+
+    def build(self, x: tf.Tensor, train_mode: tf.Tensor):
+        inp_shape = x.get_shape().as_list()
+        # features = reduce(lambda a, b: a * b, inp_shape[1:])
+        self.out = tf.reshape(x, shape=[-1, *self.shape], name='Reshape')
+
 class Dropout(Layer):
     def __init__(self, drop_probability):
         super().__init__()
