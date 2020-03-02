@@ -92,4 +92,22 @@ class ReLU(Layer):
     def build(self, x: tf.Tensor, train_mode: tf.Tensor):
         self.out = tf.nn.relu(x)
 
-       
+class LSTMCell(Layer):
+    def __init__(self, num_hidden: int, num_classes: int):
+        super().__init__()
+        self.num_hidden = num_hidden
+        self.num_classes = num_classes
+
+    def build(self, x: tf.Tensor, train_mode: tf.Tensor):
+        #seq_length = x.shape[1].value
+        #input_dim = x.shape[-1].value
+        with tf.name_scope('LSTM Layer'):
+            cell = tf.nn.rnn_cell.LSTMCell(num_units=self.num_hidden)
+            val, state = tf.nn.dynamic_rnn(cell, x, dtype=tf.float32)
+            val = tf.transpose(val, [1, 0, 2]) # batchsize, sequence l, output, dim
+            last = tf.gather(val, int(val.get_shape()[0]) - 1)
+            self.w = tf.Variable(tf.truncated_normal([self.num_hidden, self.num_classes]))
+            self.b = tf.Variable(tf.constant(0.1, shape=[self.num_classes]))
+            self.out = tf.matmul(tf.matmul(last, self.w) + self.b)
+
+
