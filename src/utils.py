@@ -16,11 +16,11 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
-import datetime
+from datetime import datetime
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 1
+history_length = 5
 
 
 # Number of first states of each episode that shall be ignored

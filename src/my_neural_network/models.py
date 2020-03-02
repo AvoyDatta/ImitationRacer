@@ -28,6 +28,7 @@ class Classifier_From_Layers:
         layers[0].build(None, self.train_mode)
         # For all the others:
         for i, layer in enumerate(layers[1:]):
+            print(i, str(layer))
             layer.build(layers[i](), self.train_mode)
         # Some useful aliases:
         self.input = layers[ 0]()  # Input placeholder
