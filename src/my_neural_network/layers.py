@@ -63,6 +63,16 @@ class Flatten(Layer):
         features = reduce(lambda a, b: a * b, inp_shape[1:])
         self.out = tf.reshape(x, shape=[-1, features], name='Flatten')
 
+class Reshape(Layer):
+    def __init__(self, shape):
+        super().__init__()
+        self.shape = shape #Shape AFTER zeroth dim
+
+    def build(self, x: tf.Tensor, train_mode: tf.Tensor):
+        inp_shape = x.get_shape().as_list()
+        # features = reduce(lambda a, b: a * b, inp_shape[1:])
+        self.out = tf.reshape(x, shape=[-1, *self.shape], name='Reshape')
+
 class Dropout(Layer):
     def __init__(self, drop_probability):
         super().__init__()
@@ -91,7 +101,7 @@ class LSTMCell(Layer):
     def build(self, x: tf.Tensor, train_mode: tf.Tensor):
         #seq_length = x.shape[1].value
         #input_dim = x.shape[-1].value
-        with tf.name_scope('LSTM Layer'):
+        with tf.name_scope('LSTM_Layer'):
             cell = tf.nn.rnn_cell.LSTMCell(num_units=self.num_hidden)
             val, state = tf.nn.dynamic_rnn(cell, x, dtype=tf.float32)
             val = tf.transpose(val, [1, 0, 2]) # batchsize, sequence l, output, dim

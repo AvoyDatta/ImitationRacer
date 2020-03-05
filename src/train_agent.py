@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 # My packages and modules:
 from agent import Agent
 import utils
+from utils import config
 import pdb
 import argparse
 
@@ -13,6 +14,8 @@ data_dir = '../data/'
 ckpt_dir = '../ckpts/'
 save_every = 1000
 np.random.seed(seed=random_seed)
+
+
 
 def read_data(data_path, use_last = False):
     # TODO: Fix the file thing
@@ -87,9 +90,11 @@ if __name__ == "__main__":
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
 
     args = parser.parse_args()
-    ckpt_path = os.path.join(ckpt_dir, args.user, utils.curr_time())
+    ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, utils.curr_time())
     if not os.path.exists(ckpt_path):
-        os.mkdir(ckpt_path)
+        os.makedirs(ckpt_path)
+        print("Created ckpt dir: ", ckpt_path)
+
 
     # pdb.set_trace()
     data_path = os.path.join(data_dir, args.user)
@@ -99,18 +104,24 @@ if __name__ == "__main__":
     # Plot action histogram. JUST FOR DEBUGGING.
     plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
     # Balance samples. Gets hide of 50% of the most common action (accelerate)
+
+
+    # Unbalanced 
     X_pp, y_pp = utils.balance_actions(X_pp, y_pp, 0.5)
+
     # Plot action histogram. JUST FOR DEBUGGING.
     plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
     # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
     # Requires to run the above fucntion with hist_len=1, shuffle=False.
-    plot_states(X_pp, X)
+    # plot_states(X_pp, X)
     # Split data into training and validation:
     X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1)
     # Create a new agent from scratch:
-    agent = Agent.from_scratch(n_channels=utils.history_length)
+    # agent = Agent.from_scratch(n_channels=utils.history_length)
+
+    agent = Agent.from_scratch('lstm', utils.config, n_channels=config['history_length'])
     # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=1e-2, display_step=100,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path) # added more arguments
 

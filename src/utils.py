@@ -13,14 +13,16 @@ import glob
 import copy
 import os
 import pandas as pd
-
+import pdb
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
-import datetime
+from datetime import datetime
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 1
+history_length = 3
+
+
 # Number of first states of each episode that shall be ignored
 # from the expert dataset:
 dead_start = 50
@@ -35,6 +37,16 @@ actions = np.array([
     [-1.0, 0.0, 0.0],  # LEFT
 ], dtype=np.float32)
 n_actions = len(actions)
+
+
+
+config = {
+    'lstm_inp_dim':64,
+    'history_length':history_length,
+    'lstm_hidden': 64,
+    'num_classes': n_actions
+}
+
 
 def read_json(json_path):
     """
@@ -247,11 +259,12 @@ def preprocess_state(states):
 
     return states_pp
 
-def stack_history(X, y, N, shuffle=True):
+def stack_history(X, y, N, shuffle=False):
     """ Stack states from the expert database into volumes of depth=history_length """
     x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
     x_stack = np.moveaxis(x_stack, 1, -1)
     y_stack = y[N-1:]
+    pdb.set_trace()
     if shuffle:
         order = np.arange(len(x_stack))
         np.random.shuffle(order)

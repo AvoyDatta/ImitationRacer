@@ -7,7 +7,7 @@ import gym, os, json
 from agent import Agent
 import utils
 import argparse
-import time 
+import time
 
 ckpt_dir = '../ckpts/'
 results_dir = '../results/'
