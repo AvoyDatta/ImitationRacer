@@ -20,7 +20,7 @@ from datetime import datetime
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 3
+history_length = 5
 
 
 # Number of first states of each episode that shall be ignored
@@ -264,7 +264,7 @@ def stack_history(X, y, N, shuffle=False):
     x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
     x_stack = np.moveaxis(x_stack, 1, -1)
     y_stack = y[N-1:]
-    pdb.set_trace()
+    # pdb.set_trace()
     if shuffle:
         order = np.arange(len(x_stack))
         np.random.shuffle(order)

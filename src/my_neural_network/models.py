@@ -50,11 +50,11 @@ class Classifier_From_Layers:
         # Model's session:
         self.sess = tf.Session()
         # Scalar summaries for Tensorboard
-        summ_loss = tf.summary.scalar('Loss', self.loss_fn)
-        summ_train_acc = tf.summary.scalar('Training accuracy', self.accuracy)
-        self.summ_train = tf.summary.merge([summ_loss, summ_train_acc])
+
         self.summ_valid = tf.summary.scalar('Validation accuracy', self.accuracy)
 
+
+        # self.summ_train = tf.summary.merge([summ_loss, summ_train_acc, *summ_losses])
 
     def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step=100,
               ckpt_step=1e4, ckpt_path=None):
@@ -63,6 +63,19 @@ class Classifier_From_Layers:
         train_op = optimizer.minimize(self.loss_fn)
         init = tf.global_variables_initializer()
         self.sess.run(init)
+        summ_loss = tf.summary.scalar('Loss', self.loss_fn)
+        summ_train_acc = tf.summary.scalar('Training accuracy', self.accuracy)
+
+        grads_and_vars = optimizer.compute_gradients(self.loss_fn, tf.trainable_variables())
+        summ_grads = []
+        ctr = 0
+        for g, v in grads_and_vars:
+            ctr+=1
+            summ_grads.append(tf.summary.histogram(v.name, v))
+            summ_grads.append(tf.summary.histogram(v.name + '_grad', g))
+        print("num vars ", ctr)
+        self.summ_train = tf.summary.merge([summ_loss, summ_train_acc, *summ_grads])
+
         # Setup a writter for tensorboard summaries
         timestr = utils.curr_time() + '/'
         writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)

@@ -102,15 +102,15 @@ if __name__ == "__main__":
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
 
     # Plot action histogram. JUST FOR DEBUGGING.
-    plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
+    # plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
     # Balance samples. Gets hide of 50% of the most common action (accelerate)
 
 
     # Unbalanced 
-    X_pp, y_pp = utils.balance_actions(X_pp, y_pp, 0.5)
+    # X_pp, y_pp = utils.balance_actions(X_pp, y_pp, 0.5)
 
     # Plot action histogram. JUST FOR DEBUGGING.
-    plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
+    # plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
     # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
     # Requires to run the above fucntion with hist_len=1, shuffle=False.
     # plot_states(X_pp, X)
