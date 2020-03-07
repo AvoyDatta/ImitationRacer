@@ -5,3 +5,5 @@ results/*
 tensorboard_data/*
 src/__pycache__/*.pyc
 src/my_neural_network/__pycache__/*.pyc
+*.pyc
+
