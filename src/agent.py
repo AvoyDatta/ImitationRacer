@@ -38,17 +38,17 @@ class Agent:
                 mnn.layers.Input(input_shape=[96, 96, n_channels]),
 
                 mnn.layers.Reshape([96, 96, 1]), 
-                mnn.layers.Conv2d(filters=16, kernel_size=3, stride=1),
+                mnn.layers.Conv2d(filters=16, kernel_size=5, stride=4), 
                 mnn.layers.ReLU(), 
                 # tf.layers.BatchNormalization(),
                 mnn.layers.Dropout(drop_probability=0.5),
-                mnn.layers.Conv2d(filters=32, kernel_size=5, stride=2),
+                mnn.layers.Conv2d(filters=32, kernel_size=3, stride=2), 
                 mnn.layers.ReLU(), 
                 mnn.layers.Dropout(drop_probability=0.5),
                 # tf.layers.BatchNormalization(),
                 mnn.layers.Flatten(), 
                 mnn.layers.Linear(n_units=config['lstm_inp_dim']),
-                mnn.layers.ReLU(),
+
                 mnn.layers.Reshape([config["history_length"], config['lstm_inp_dim']]), 
 
                 ## RNN Layer

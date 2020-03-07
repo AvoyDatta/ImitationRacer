@@ -13,14 +13,15 @@ import glob
 import copy
 import os
 import pandas as pd
-import pdb
+
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 from datetime import datetime
+import pdb
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 5
+history_length = 3
 
 
 # Number of first states of each episode that shall be ignored
@@ -41,7 +42,7 @@ n_actions = len(actions)
 
 
 config = {
-    'lstm_inp_dim':64,
+    'lstm_inp_dim': 64,
     'history_length':history_length,
     'lstm_hidden': 64,
     'num_classes': n_actions
@@ -219,7 +220,21 @@ def balance_actions(X, y, drop_prob):
 
     return X_bal, y_bal
 
+def balance_min_actions(X, y):
+    actions, counts = np.unique(y, axis=0, return_counts=True)
+    min_count = counts.min() # get min count
+    # pick these many instances of all actions
+    final_indices = np.empty(());
+    for action in actions:
+        mask = np.all(y==action, axis=1)
+        idx = np.where(mask==True)[0][:min_count]
+        final_indices = np.hstack((final_indices, idx))
 
+    # get rid of the first element of the array
+    final_indices = final_indices[1:].astype(int) # discard first
+    X_bal, y_bal = X[final_indices], y[final_indices]
+
+    return X_bal, y_bal    
 
 def preprocess_state(states):
     """ Preprocess the images (states) of the expert dataset before feeding them to agent """
@@ -259,12 +274,11 @@ def preprocess_state(states):
 
     return states_pp
 
-def stack_history(X, y, N, shuffle=False):
+def stack_history(X, y, N, shuffle=True):
     """ Stack states from the expert database into volumes of depth=history_length """
     x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
     x_stack = np.moveaxis(x_stack, 1, -1)
     y_stack = y[N-1:]
-    # pdb.set_trace()
     if shuffle:
         order = np.arange(len(x_stack))
         np.random.shuffle(order)

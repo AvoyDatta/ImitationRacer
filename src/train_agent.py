@@ -102,15 +102,13 @@ if __name__ == "__main__":
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
 
     # Plot action histogram. JUST FOR DEBUGGING.
-    # plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
-    # Balance samples. Gets hide of 50% of the most common action (accelerate)
+    plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
 
-
-    # Unbalanced 
-    # X_pp, y_pp = utils.balance_actions(X_pp, y_pp, 0.5)
+    # Balance as per min action  
+    X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)#utils.balance_actions(X_pp, y_pp, 0.5)
 
     # Plot action histogram. JUST FOR DEBUGGING.
-    # plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
+    plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
     # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
     # Requires to run the above fucntion with hist_len=1, shuffle=False.
     # plot_states(X_pp, X)
@@ -121,7 +119,7 @@ if __name__ == "__main__":
 
     agent = Agent.from_scratch('lstm', utils.config, n_channels=config['history_length'])
     # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=1e-2, display_step=100,
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path) # added more arguments
 

@@ -50,11 +50,11 @@ class Classifier_From_Layers:
         # Model's session:
         self.sess = tf.Session()
         # Scalar summaries for Tensorboard
-
+        summ_loss = tf.summary.scalar('Loss', self.loss_fn)
+        summ_train_acc = tf.summary.scalar('Training accuracy', self.accuracy)
+        self.summ_train = tf.summary.merge([summ_loss, summ_train_acc])
         self.summ_valid = tf.summary.scalar('Validation accuracy', self.accuracy)
 
-
-        # self.summ_train = tf.summary.merge([summ_loss, summ_train_acc, *summ_losses])
 
     def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step=100,
               ckpt_step=1e4, ckpt_path=None):
@@ -63,19 +63,6 @@ class Classifier_From_Layers:
         train_op = optimizer.minimize(self.loss_fn)
         init = tf.global_variables_initializer()
         self.sess.run(init)
-        summ_loss = tf.summary.scalar('Loss', self.loss_fn)
-        summ_train_acc = tf.summary.scalar('Training accuracy', self.accuracy)
-
-        grads_and_vars = optimizer.compute_gradients(self.loss_fn, tf.trainable_variables())
-        summ_grads = []
-        ctr = 0
-        for g, v in grads_and_vars:
-            ctr+=1
-            summ_grads.append(tf.summary.histogram(v.name, v))
-            summ_grads.append(tf.summary.histogram(v.name + '_grad', g))
-        print("num vars ", ctr)
-        self.summ_train = tf.summary.merge([summ_loss, summ_train_acc, *summ_grads])
-
         # Setup a writter for tensorboard summaries
         timestr = utils.curr_time() + '/'
         writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)
@@ -88,7 +75,17 @@ class Classifier_From_Layers:
             # Foward and backward pass
             self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
             # Display and store loss and accuracies every display_step
+
+            ## DEBUG
+            debug_argmax = self.sess.run(self.prediction, 
+                    feed_dict={self.input: batch_x, self.train_mode: False})
+            unique, counts = np.unique(debug_argmax, return_counts=True)
+
+            ##
+
             if step % display_step == 0:
+                debug_dict = dict(zip(unique, counts))
+                print(debug_dict)
                 # Training statistics
                 loss, train_acc, summ = self.sess.run([self.loss_fn, self.accuracy, self.summ_train], 
                     feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: False})
@@ -99,7 +96,7 @@ class Classifier_From_Layers:
                 writer.add_summary(summ, step)
                 print(f'Step: {step}, Loss: {loss:.5f}, Training accuracy: {train_acc:.4f}, Validation accuracy: {val_acc:.4f}')
 
-            if step % ckpt_step ==0:
+            if step % ckpt_step ==0 and step is not 0:
 
                 # Validation statistics
                 val_acc, summ = self.sess.run([self.accuracy, self.summ_valid],
