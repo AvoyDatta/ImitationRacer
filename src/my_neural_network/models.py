@@ -14,6 +14,8 @@ else:
     from my_neural_network.layers import Layer    
 
 import utils
+import sklearn
+from sklearn.utils.class_weight import compute_class_weight
 
 class Classifier_From_Layers:
     """ 
@@ -36,12 +38,19 @@ class Classifier_From_Layers:
         # Placeholder for the labels:
         self.labels = tf.placeholder("float", self.logit.shape, name='Labels')
         # Loss function:
+        self.class_weights = tf.placeholder_with_default(np.ones((self.logit.shape[-1],1), dtype=np.float32), [self.logit.shape[-1],1], name='class_weights')
+
+        self.sample_wts = tf.matmul(self.labels, self.class_weights)  #(N, )
+
         with tf.name_scope('Training_loss'):
-            self.cross_entrop = tf.nn.softmax_cross_entropy_with_logits_v2(
+            self.cross_entrop = tf.nn.softmax_cross_entropy_with_logits(
                 logits=self.logit, 
                 labels=self.labels, 
                 name='Cross_entropy')
-            self.loss_fn = tf.reduce_mean(self.cross_entrop, name='Loss_function')
+
+            self.weighted_ce = self.sample_wts * self.cross_entrop
+
+            self.loss_fn = tf.reduce_mean(self.weighted_ce, name='Loss_function')
         # Evaluation graph:
         with tf.name_scope('Evaluation'):
             self.prediction = tf.argmax(self.logit, 1, name='Prediction')
@@ -67,13 +76,17 @@ class Classifier_From_Layers:
         timestr = utils.curr_time() + '/'
         writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)
         # Training loop:
+        wts = np.expand_dims(compute_class_weight('balanced', np.arange(y_train.shape[-1]), np.argmax(y_train, axis=1)), 1)
+
         for step in range(n_batches):
             # Sample training data
             pick = np.random.randint(0, len(y_train), batch_size)
             batch_x = X_train[pick]
             batch_y = y_train[pick]
+            # batch_wts = wts[pick]
             # Foward and backward pass
-            self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
+            # print(wts.shape, wts)
+            self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.class_weights:wts, self.train_mode: True})
             # Display and store loss and accuracies every display_step
 
             ## DEBUG
@@ -96,7 +109,7 @@ class Classifier_From_Layers:
                 writer.add_summary(summ, step)
                 print(f'Step: {step}, Loss: {loss:.5f}, Training accuracy: {train_acc:.4f}, Validation accuracy: {val_acc:.4f}')
 
-            if step % ckpt_step ==0 and step is not 0:
+            if step % ckpt_step ==0:
 
                 # Validation statistics
                 val_acc, summ = self.sess.run([self.accuracy, self.summ_valid],

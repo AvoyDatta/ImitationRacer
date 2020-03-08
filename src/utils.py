@@ -199,7 +199,7 @@ def check_invalid_actions(y):
     if ia_count > 0:
         raise Exception('Invalid actions. Do something developer!')
 
-def balance_actions(X, y, drop_prob):
+def reduce_accelerate(X, y, drop_prob):
     """ Balance samples. Gets hide of a share of the most common action (accelerate) """
     # Enconding of the action accelerate
     acceler = np.zeros(7)
@@ -219,6 +219,13 @@ def balance_actions(X, y, drop_prob):
     X_bal, y_bal = X[final_keep], y[final_keep]
 
     return X_bal, y_bal
+
+
+def action_weights(labels):
+    _, counts = np.unique(labels, axis=0, return_counts=True)
+    weights = 1. / counts
+    weights /= np.linalg.norm(weights)
+    return weights
 
 def balance_min_actions(X, y):
     actions, counts = np.unique(y, axis=0, return_counts=True)
