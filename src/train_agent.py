@@ -88,6 +88,7 @@ if __name__ == "__main__":
     # Preprocess it:
     parser = argparse.ArgumentParser()
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
+    parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
 
     args = parser.parse_args()
     ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, utils.curr_time())
@@ -110,7 +111,7 @@ if __name__ == "__main__":
 
     # Plot action histogram. JUST FOR DEBUGGING.
     # plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
-    
+
     # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
     # Requires to run the above fucntion with hist_len=1, shuffle=False.
     # plot_states(X_pp, X)
@@ -119,7 +120,7 @@ if __name__ == "__main__":
     # Create a new agent from scratch:
     # agent = Agent.from_scratch(n_channels=utils.history_length)
 
-    agent = Agent.from_scratch('lstm', utils.config, n_channels=config['history_length'])
+    agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
                 ckpt_step=save_every,

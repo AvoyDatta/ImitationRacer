@@ -20,6 +20,7 @@ class Agent:
     @classmethod  # Constructor for a brand new model
     def from_scratch(cls, model_type, config, n_channels=1):
         # model=None
+        print("Creating {} model".format(model_type))
         if model_type == 'baseline':
             layers = [
                 mnn.layers.Input(input_shape=[96, 96, n_channels]), 
