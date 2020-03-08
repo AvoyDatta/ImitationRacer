@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     # Balance as per min action  
     # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
-    #utils.reduce_accelerate(X_pp, y_pp, 0.5)
+    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, 0.5)
 
     # Plot action histogram. JUST FOR DEBUGGING.
     # plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
@@ -124,8 +124,7 @@ if __name__ == "__main__":
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
                 ckpt_step=save_every,
-                ckpt_path = ckpt_path, 
-                class_balancing = True
+                ckpt_path = ckpt_path 
                 ) # added more arguments
 
     # Save it to file:

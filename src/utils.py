@@ -21,7 +21,7 @@ import pdb
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 3
+history_length = 10
 
 
 # Number of first states of each episode that shall be ignored
@@ -45,7 +45,8 @@ config = {
     'lstm_inp_dim': 64,
     'history_length':history_length,
     'lstm_hidden': 64,
-    'num_classes': n_actions
+    'num_classes': n_actions,
+    'class_balancing': False
 }
 
 
