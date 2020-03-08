@@ -128,5 +128,5 @@ if __name__ == "__main__":
                 ) # added more arguments
 
     # Save it to file:
-    agent.save(ckpt_path)
+    agent.save(os.path.join(ckpt_path, str(utils.curr_time())))
  
