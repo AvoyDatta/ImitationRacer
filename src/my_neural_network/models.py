@@ -52,6 +52,7 @@ class Classifier_From_Layers:
                 name='Cross_entropy')
 
             if self.class_balancing: 
+                print("Balancing output classes...")
                 self.cross_entrop = self.sample_wts * self.cross_entrop
 
             self.loss_fn = tf.reduce_mean(self.cross_entrop, name='Loss_function')
@@ -81,7 +82,8 @@ class Classifier_From_Layers:
         writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)
         # Training loop:
 
-        if class_balancing: wts = np.expand_dims(compute_class_weight('balanced', np.arange(y_train.shape[-1]), np.argmax(y_train, axis=1)), 1)
+        if self.class_balancing: 
+            wts = np.expand_dims(compute_class_weight('balanced', np.arange(y_train.shape[-1]), np.argmax(y_train, axis=1)), 1)
 
         for step in range(n_batches):
             # Sample training data
@@ -91,7 +93,11 @@ class Classifier_From_Layers:
             # batch_wts = wts[pick]
             # Foward and backward pass
             # print(wts.shape, wts)
-            self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.class_weights:wts, self.train_mode: True})
+            if self.class_balancing:
+                self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.class_weights:wts, self.train_mode: True})
+            else:
+                self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
+
             # Display and store loss and accuracies every display_step
 
             ## DEBUG

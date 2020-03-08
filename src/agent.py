@@ -18,7 +18,7 @@ class Agent:
 
 
     @classmethod  # Constructor for a brand new model
-    def from_scratch(cls, model_type, config, n_channels=1, class_balancing=False):
+    def from_scratch(cls, model_type, config, n_channels=1):
         # model=None
         print("Creating {} model".format(model_type))
         if model_type == 'baseline':
@@ -57,7 +57,7 @@ class Agent:
                 #(N, n_actions)
 
             ]        
-        model = mnn.models.Classifier_From_Layers(layers)
+        model = mnn.models.Classifier_From_Layers(layers, class_balancing=config['class_balancing'])
         return Agent(model)
     
     @classmethod  # Constructor to load a model from a file
