@@ -108,6 +108,8 @@ def read_one_gzip(filename):
     return state, next_state, reward, action, terminal
 
 def get_model_path(save_dir, metric='best'):
+    if not os.path.exists(save_dir):
+        raise Exception("The ckpt dir doesn't exist!")
     if metric == 'best':
         path = sorted(list([entry.name for entry in os.scandir(save_dir)]))[::-1][0]
     elif metric == 'recent':
@@ -222,7 +224,7 @@ def reduce_accelerate(X, y, drop_prob):
 
 
 def action_weights(labels):
-    _, counts = np.unique(labels, axis=0, return_counts=True)
+    _, counts = np.unique(labels, axis=0, return_indices=True, return_counts=True)
     weights = 1. / counts
     weights /= np.linalg.norm(weights)
     return weights

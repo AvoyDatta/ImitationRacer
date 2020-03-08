@@ -23,7 +23,10 @@ class Classifier_From_Layers:
     training and predicting. 'Save to file' function is also available.
     """
 
-    def __init__(self, layers: List[Layer]):
+    def __init__(self, layers: List[Layer], class_balancing=False):
+
+        self.class_balancing = class_balancing
+
         # Placeholder for putting the network in training mode:
         self.train_mode = tf.placeholder(tf.bool, name='Train_mode')
         # Input layer is initialized with x=None:
@@ -38,9 +41,9 @@ class Classifier_From_Layers:
         # Placeholder for the labels:
         self.labels = tf.placeholder("float", self.logit.shape, name='Labels')
         # Loss function:
-        self.class_weights = tf.placeholder_with_default(np.ones((self.logit.shape[-1],1), dtype=np.float32), [self.logit.shape[-1],1], name='class_weights')
-
-        self.sample_wts = tf.matmul(self.labels, self.class_weights)  #(N, )
+        if self.class_balancing:
+            self.class_weights = tf.placeholder_with_default(np.ones((self.logit.shape[-1],1), dtype=np.float32), [self.logit.shape[-1],1], name='class_weights')
+            self.sample_wts = tf.matmul(self.labels, self.class_weights)  #(N, )
 
         with tf.name_scope('Training_loss'):
             self.cross_entrop = tf.nn.softmax_cross_entropy_with_logits(
@@ -48,9 +51,10 @@ class Classifier_From_Layers:
                 labels=self.labels, 
                 name='Cross_entropy')
 
-            self.weighted_ce = self.sample_wts * self.cross_entrop
+            if self.class_balancing: 
+                self.cross_entrop = self.sample_wts * self.cross_entrop
 
-            self.loss_fn = tf.reduce_mean(self.weighted_ce, name='Loss_function')
+            self.loss_fn = tf.reduce_mean(self.cross_entrop, name='Loss_function')
         # Evaluation graph:
         with tf.name_scope('Evaluation'):
             self.prediction = tf.argmax(self.logit, 1, name='Prediction')
@@ -76,7 +80,8 @@ class Classifier_From_Layers:
         timestr = utils.curr_time() + '/'
         writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)
         # Training loop:
-        wts = np.expand_dims(compute_class_weight('balanced', np.arange(y_train.shape[-1]), np.argmax(y_train, axis=1)), 1)
+
+        if class_balancing: wts = np.expand_dims(compute_class_weight('balanced', np.arange(y_train.shape[-1]), np.argmax(y_train, axis=1)), 1)
 
         for step in range(n_batches):
             # Sample training data
@@ -119,7 +124,7 @@ class Classifier_From_Layers:
 
                 ## save model as ValAcc_timeStamp
                 # create string_name
-                current_time = utils.curr_time()
+                current_time = os.path.join(ckpt_path, str(utils.curr_time()))
                 val_string = str(round(val_acc, 3))
                 if not os.path.exists(ckpt_path):
                     os.mkdir(ckpt_path)

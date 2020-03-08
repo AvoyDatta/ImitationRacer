@@ -91,7 +91,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
 
     args = parser.parse_args()
-    ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, utils.curr_time())
+    ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model, utils.curr_time())
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
         print("Created ckpt dir: ", ckpt_path)
@@ -124,7 +124,9 @@ if __name__ == "__main__":
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
                 ckpt_step=save_every,
-                ckpt_path = ckpt_path) # added more arguments
+                ckpt_path = ckpt_path, 
+                class_balancing = True
+                ) # added more arguments
 
     # Save it to file:
     agent.save(ckpt_path)

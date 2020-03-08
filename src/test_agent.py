@@ -59,22 +59,28 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
     parser.add_argument("--eps", type=int, default=15, help="Insert number of episodes to run.")
+    parser.add_argument("--ts", type=str, help="Time stamp at which the model was run")
+    parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
 
     args = parser.parse_args()
 
-    user_path = os.path.join(ckpt_dir, args.user)
+    user_path = os.path.join(ckpt_dir, args.user, args.model, args.ts)
     saved_path = os.path.join(user_path, utils.get_model_path(user_path, metric='best'))
 
-    print("Loading model from {}".format(saved_path))
-    results_path = os.path.join(results_dir, args.user)
-    if not os.path.exists(results_path):
-        os.mkdir(results_path)
+
+    if not args.ts:
+        raise Exception("Entire timestamp for ckpt from training run!")
+    if not os.path.exists(saved_path):
+        raise Exception("Ckpt path doesnt exist!")
 
     # Number of episodes to test:
     n_test_episodes = args.eps #15
 
     # Initialize environment and agent:
     env = gym.make('CarRacing-v0').unwrapped
+
+    print("Loading model from {}".format(saved_path))
+
     agent = Agent.from_file(saved_path)
 
     # Episodes loop:
@@ -87,6 +93,12 @@ if __name__ == "__main__":
 
 
     # save reward statistics in a .json file
+
+    
+    results_path = os.path.join(results_dir, args.user, args.model, args.ts)
+
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
     save_performance_results(episode_rewards, results_path)
     print("Saving results to {}".format(results_path))
     print('... finished')

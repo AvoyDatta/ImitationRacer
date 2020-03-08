@@ -18,7 +18,7 @@ class Agent:
 
 
     @classmethod  # Constructor for a brand new model
-    def from_scratch(cls, model_type, config, n_channels=1):
+    def from_scratch(cls, model_type, config, n_channels=1, class_balancing=False):
         # model=None
         print("Creating {} model".format(model_type))
         if model_type == 'baseline':
