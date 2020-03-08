@@ -4,6 +4,8 @@ import numpy as np
 import abc
 # My modules and packages:
 import utils
+from utils import config
+
 import my_neural_network as mnn
 import tensorflow as tf
 
@@ -78,7 +80,10 @@ class Agent:
         self.action_counter = 0
         # This data structure (kind of a deque) will always store the
         # last 'history_lenght' states and will be fed to the model:
-        self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], utils.history_length))
+        # self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], utils.history_length))
+
+        self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], config['sample_interval']*utils.history_length))
+
         for _ in range(utils.history_length):
             self.__push_state(state0)
 
@@ -88,8 +93,10 @@ class Agent:
         sg = state.astype(np.float32)
         sg = np.expand_dims(sg, 0)
         sg = utils.preprocess_state(sg)
-        self.state_hist[0,:,:,1:] = self.state_hist[0,:,:,:-1]
-        self.state_hist[0,:,:,0] = sg[0]
+        # self.state_hist[0,:,:,1:] = self.state_hist[0,:,:,:-1]
+        self.state_hist[0,:,:,:-1] = self.state_hist[0,:,:,1:]
+        # self.state_hist[0,:,:,0] = sg[0]
+        self.state_hist[0,:,:,-1] = sg[0]
 
     def get_action(self, env_state):
         # Add the current state to the state history:

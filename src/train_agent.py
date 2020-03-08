@@ -9,11 +9,10 @@ from utils import config
 import pdb
 import argparse
 
-random_seed = 10
 data_dir = '../data/'
 ckpt_dir = '../ckpts/'
 save_every = 1000
-np.random.seed(seed=random_seed)
+np.random.set_seed(config['random_seed'])
 
 
 
@@ -40,13 +39,13 @@ def read_data(data_path, use_last = False):
 #     y = utils.vstack(data["action"])
 #     return X, y
 
-def preprocess_data(X, y, hist_len, shuffle):
+def preprocess_data(X, y, hist_len, shuffle, sample_interval=1):
     """ Preprocess states and actions from expert dataset before feeding them to the agent """
     print('Preprocessing states. Shape:', X.shape)
     utils.check_invalid_actions(y)
     y_pp = utils.transl_action_env2agent(y)
     X_pp = utils.preprocess_state(X)
-    X_pp, y_pp = utils.stack_history(X_pp, y_pp, hist_len, shuffle=shuffle)
+    X_pp, y_pp = utils.stack_history(X_pp, y_pp, hist_len, shuffle=shuffle, sample_interval=sample_interval)
     return X_pp, y_pp
 
 def split_data(X, y, frac = 0.1, shuffle = True):
@@ -100,7 +99,7 @@ if __name__ == "__main__":
     # pdb.set_trace()
     data_path = os.path.join(data_dir, args.user)
     X, y = read_data(data_path)
-    X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False)
+    X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False, sample_interval=config['sample_interval'])
 
     # Plot action histogram. JUST FOR DEBUGGING.
     plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   

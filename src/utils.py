@@ -37,6 +37,9 @@ actions = np.array([
     [-1.0, 0.0, 0.4],  # LEFT_BRAKE
     [-1.0, 0.0, 0.0],  # LEFT
 ], dtype=np.float32)
+
+
+ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 n_actions = len(actions)
 
 
@@ -46,7 +49,9 @@ config = {
     'history_length':history_length,
     'lstm_hidden': 64,
     'num_classes': n_actions,
-    'class_balancing': False
+    'class_balancing': False,
+    'sample_interval': 2,
+    'random_seed': 10
 }
 
 
@@ -78,10 +83,10 @@ def comparison_histogram(save_path, expert_json, agent_json):
 
     # fig, ax = plt.subplots()
     # dist.plot.kde(ax=ax, legend=False, title='Histogram: Expert vs. Agent')
-    plt.hist(expert_rewards, color='salmon', bins=5, label='expert', alpha=.75)
-    plt.hist(agent_rewards, color='royalblue', bins=5, label='agent', alpha=.75)
+    plt.hist(expert_rewards, color='salmon', bins=ranges, label='expert', alpha=.75)
+    plt.hist(agent_rewards, color='royalblue', bins=ranges, label='agent', alpha=.75)
     plt.legend()
-    plt.ylabel("Episodes"); plt.xlabel('Episode Rewards')
+    plt.ylabel("Episodes"); plt.xlabel('Episode Rewards'); plt.title("Distribution of rewards for {} expert and {} agent demonstrations".format(len(expert_rewards), len(agent_rewards)))
     # dist.plot.hist(ax=ax)
     # ax.set_ylabel('Probability')
     # ax.grid(axis='y')
@@ -284,16 +289,21 @@ def preprocess_state(states):
 
     return states_pp
 
-def stack_history(X, y, N, shuffle=True):
+def stack_history(X, y, N, shuffle=False, si=1):
     """ Stack states from the expert database into volumes of depth=history_length """
     x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
+    # x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(2*N, len(X)+1)]
+
     x_stack = np.moveaxis(x_stack, 1, -1)
     y_stack = y[N-1:]
-    if shuffle:
-        order = np.arange(len(x_stack))
-        np.random.shuffle(order)
-        x_stack = x_stack[order]
-        y_stack = y_stack[order]
+
+
+    # Unused
+    # if shuffle:
+    #     order = np.arange(len(x_stack))
+    #     np.random.shuffle(order)
+    #     x_stack = x_stack[order]
+    #     y_stack = y_stack[order]
     return x_stack, y_stack
 
 
