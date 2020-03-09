@@ -11,3 +11,12 @@
 
 
 *lstm_1.0*: LSTM, sample_interval = 2, no class balancing, history_len = 3 
+
+
+*Sample train (from ImitationRacer/src)*
+
+python train_agent.py --user <user name> --model <version name> 
+
+*Sample test (from ImitationRacer/src)*
+
+python test_agent.py --user <user name> --model <version name> --ts <time stamp of training (from ckpts/user/model/)> --eps <num episodes>
