@@ -80,9 +80,9 @@ class Agent:
         self.action_counter = 0
         # This data structure (kind of a deque) will always store the
         # last 'history_lenght' states and will be fed to the model:
-        # self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], utils.history_length))
+        self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], utils.history_length))
 
-        self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], config['sample_interval']*utils.history_length))
+        # self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], config['sample_interval']*utils.history_length))
 
         for _ in range(utils.history_length):
             self.__push_state(state0)

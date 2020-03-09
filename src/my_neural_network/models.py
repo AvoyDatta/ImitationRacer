@@ -17,7 +17,7 @@ import utils
 import sklearn
 from sklearn.utils.class_weight import compute_class_weight
 from utils import config
-tf.random.set_seed(config['random_seed'])
+tf.set_random_seed(config['random_seed'])
 
 
 

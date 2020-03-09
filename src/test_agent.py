@@ -63,13 +63,12 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
 
     args = parser.parse_args()
-
+    if not args.ts:
+        raise Exception("Enter timestamp for ckpt from training run!")
     user_path = os.path.join(ckpt_dir, args.user, args.model, args.ts)
     saved_path = os.path.join(user_path, utils.get_model_path(user_path, metric='best'))
 
 
-    if not args.ts:
-        raise Exception("Entire timestamp for ckpt from training run!")
     if not os.path.exists(saved_path):
         raise Exception("Ckpt path doesnt exist!")
 
