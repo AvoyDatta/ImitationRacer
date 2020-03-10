@@ -6,6 +6,7 @@ import shutil, os, time
 from datetime import datetime
 import pdb
 
+import os
 tensorboard_path = "../tensorboard_data/"
 
 if __name__ == "__main__":
@@ -65,12 +66,16 @@ class Classifier_From_Layers:
             self.prediction = tf.argmax(self.logit, 1, name='Prediction')
             correct_pred = tf.equal(self.prediction, tf.argmax(self.labels, 1), name='Score')
             self.accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32), name='Accuracy')
+            self.mean_preds = tf.reduce_mean(self.prediction, name='Prediction_mean')
+
         # Model's session:
         self.sess = tf.Session()
         # Scalar summaries for Tensorboard
         summ_loss = tf.summary.scalar('Loss', self.loss_fn)
         summ_train_acc = tf.summary.scalar('Training accuracy', self.accuracy)
-        self.summ_train = tf.summary.merge([summ_loss, summ_train_acc])
+        summ_preds = tf.summary.scalar('Means of predictions', self.mean_preds)
+
+        self.summ_train = tf.summary.merge([summ_loss, summ_train_acc, summ_preds])
         self.summ_valid = tf.summary.scalar('Validation accuracy', self.accuracy)
 
 
@@ -82,8 +87,13 @@ class Classifier_From_Layers:
         init = tf.global_variables_initializer()
         self.sess.run(init)
         # Setup a writter for tensorboard summaries
-        timestr = utils.curr_time() + '/'
-        writer = tf.summary.FileWriter(tensorboard_path + timestr, self.sess.graph)
+        train_start = utils.curr_time()
+        ckpt_path = os.path.join(ckpt_path, train_start)
+
+        if not os.path.exists(ckpt_path):
+            os.makedirs(ckpt_path)
+
+        writer = tf.summary.FileWriter(os.path.join(tensorboard_path, train_start), self.sess.graph)
         # Training loop:
 
         if self.class_balancing: 
@@ -123,6 +133,7 @@ class Classifier_From_Layers:
                     feed_dict={self.input: X_valid, self.labels: y_valid, self.train_mode: False})
                 writer.add_summary(summ, step)
                 print(f'Step: {step}, Loss: {loss:.5f}, Training accuracy: {train_acc:.4f}, Validation accuracy: {val_acc:.4f}')
+                print(pick)
 
             if step % ckpt_step ==0:
 
@@ -134,14 +145,17 @@ class Classifier_From_Layers:
 
                 ## save model as ValAcc_timeStamp
                 # create string_name
-                current_time = os.path.join(ckpt_path, str(utils.curr_time()))
+                current_time = utils.curr_time()
                 val_string = str(round(val_acc, 3))
-                if not os.path.exists(ckpt_path):
-                    os.mkdir(ckpt_path)
+
                 new_path = val_string + "_" + current_time
+                save_path = os.path.join(ckpt_path, new_path)
+
+                if not os.path.exists(save_path):
+                    os.mkdir(save_path)               
                 #pdb.set_trace()
                 print('Saving Model\n')
-                self.save(os.path.join(ckpt_path, new_path))
+                self.save(save_path)
 
         writer.close()
         print("Training finished.")
