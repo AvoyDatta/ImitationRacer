@@ -84,7 +84,8 @@ class Classifier_From_Layers:
               ckpt_step=1e4, ckpt_path=None, seed=10):
 
         tf.set_random_seed(seed)
-       
+        np.random.seed(seed)
+
         optimizer = tf.train.AdamOptimizer(learning_rate=lr)
         #optimizer = tf.train.MomentumOptimizer(lr, 0.9, use_nesterov=True)
         train_op = optimizer.minimize(self.loss_fn)
@@ -107,7 +108,6 @@ class Classifier_From_Layers:
 
         for step in range(n_batches):
             # Sample training data
-            np.random.seed(seed)
             pick = np.random.randint(0, len(y_train), batch_size)
             batch_x = X_train[pick]
             batch_y = y_train[pick]
