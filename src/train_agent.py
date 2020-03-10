@@ -131,9 +131,9 @@ if __name__ == "__main__":
 
     agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
     lr = 5e-3
-    log_path = os.path.join(os.getcwd(), log_dir, args.user)
+    log_path = os.path.join(os.getcwd(), log_dir, args.user, args.model)
     if not os.path.exists(log_path):
-    	os.mkdir(log_path)
+    	os.makedirs(log_path)
     	print("Creating log dir: ", log_path)
     model_config = dict()
     model_config['config'] = config
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     	json.dump(model_config, fh)
 
     # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=128, lr=lr, display_step=100,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path,
                 seed=parser.seed 

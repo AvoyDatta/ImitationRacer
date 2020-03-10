@@ -159,7 +159,7 @@ class Classifier_From_Layers:
                 save_path = os.path.join(ckpt_path, new_path)
 
                 if not os.path.exists(save_path):
-                    os.mkdir(save_path)               
+                    os.makedirs(save_path)               
                 #pdb.set_trace()
                 print('Saving Model\n')
                 self.save(save_path)
