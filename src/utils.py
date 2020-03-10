@@ -50,7 +50,7 @@ config = {
     'lstm_hidden': 64,
     'num_classes': n_actions,
     'class_balancing': False,
-    'sample_interval': 2,
+    # 'sample_interval': 2,
     # 'random_seed': 7
 }
 
