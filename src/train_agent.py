@@ -1,5 +1,5 @@
 # Third-party packages and modules:
-import pickle, os, gzip
+import pickle, os, gzip, json
 import numpy as np
 import matplotlib.pyplot as plt
 # My packages and modules:
@@ -11,6 +11,7 @@ import argparse
 
 data_dir = '../data/'
 ckpt_dir = '../ckpts/'
+log_dir = '../logs'
 save_every = 1000
 np.random.seed(config['random_seed'])
 
@@ -90,7 +91,8 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
 
     args = parser.parse_args()
-    ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model, utils.curr_time())
+    c_time = utils.curr_time()
+    ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model, c_time)
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
         print("Created ckpt dir: ", ckpt_path)
@@ -107,7 +109,8 @@ if __name__ == "__main__":
 
     # Balance as per min action  
     # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
-    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, 0.5)
+    drop_prob = 0.5
+    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob)
 
     # Plot action histogram. JUST FOR DEBUGGING.
     plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
@@ -121,6 +124,20 @@ if __name__ == "__main__":
     # agent = Agent.from_scratch(n_channels=utils.history_length)
 
     agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
+    lr = 5e-4
+    log_path = os.path.join(os.getcwd(), log_dir, args.user)
+    if not os.path.exists(log_path):
+    	os.mkdir(log_path)
+    	print("Creating log dir: ", log_path)
+    model_config = dict()
+    model_config['config'] = config
+    model_config['user'] = args.user
+    model_config['acc_drop_prob'] = drop_prob
+    model_config['learning_rate'] = lr
+    fname = os.path.join(log_path, c_time + ".json")
+    with open(fname, 'w') as fh:
+    	json.dump(model_config, fh)
+
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
                 ckpt_step=save_every,
