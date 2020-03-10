@@ -19,6 +19,7 @@ import sklearn
 from sklearn.utils.class_weight import compute_class_weight
 from utils import config
 tf.set_random_seed(config['random_seed'])
+np.random.seed(config['random_seed'])
 
 
 
@@ -156,9 +157,17 @@ class Classifier_From_Layers:
                 #pdb.set_trace()
                 print('Saving Model\n')
                 self.save(save_path)
-
+        
         writer.close()
         print("Training finished.")
+
+        # #pdb.set_trace()
+        # print('Saving Model\n')
+        # save_path = os.path.join(ckpt_path, new_path)
+
+        # if not os.path.exists(save_path):
+        #     os.mkdir(save_path)    
+        # self.save(save_path)
 
     def eval_test_accuracy(self, dataset):
         test_acc = self.sess.run(self.accuracy, 

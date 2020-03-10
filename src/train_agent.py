@@ -12,7 +12,7 @@ import argparse
 data_dir = '../data/'
 ckpt_dir = '../ckpts/'
 save_every = 1000
-np.random.set_seed(config['random_seed'])
+np.random.seed(config['random_seed'])
 
 
 
@@ -45,7 +45,7 @@ def preprocess_data(X, y, hist_len, shuffle, sample_interval=1):
     utils.check_invalid_actions(y)
     y_pp = utils.transl_action_env2agent(y)
     X_pp = utils.preprocess_state(X)
-    X_pp, y_pp = utils.stack_history(X_pp, y_pp, hist_len, shuffle=shuffle, sample_interval=sample_interval)
+    X_pp, y_pp = utils.stack_history(X_pp, y_pp, hist_len, shuffle=shuffle, si=sample_interval)
     return X_pp, y_pp
 
 def split_data(X, y, frac = 0.1, shuffle = True):
@@ -101,31 +101,32 @@ if __name__ == "__main__":
     X, y = read_data(data_path)
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False, sample_interval=config['sample_interval'])
 
-    # Plot action histogram. JUST FOR DEBUGGING.
-    plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
+    # return
+    # # Plot action histogram. JUST FOR DEBUGGING.
+    # plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
 
-    # Balance as per min action  
-    # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
-    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, 0.5)
+    # # Balance as per min action  
+    # # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
+    # X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, 0.5)
 
-    # Plot action histogram. JUST FOR DEBUGGING.
-    plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
+    # # Plot action histogram. JUST FOR DEBUGGING.
+    # plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
 
-    # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
-    # Requires to run the above fucntion with hist_len=1, shuffle=False.
-    # plot_states(X_pp, X)
-    # Split data into training and validation:
-    X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1)
-    # Create a new agent from scratch:
-    # agent = Agent.from_scratch(n_channels=utils.history_length)
+    # # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
+    # # Requires to run the above fucntion with hist_len=1, shuffle=False.
+    # # plot_states(X_pp, X)
+    # # Split data into training and validation:
+    # X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1)
+    # # Create a new agent from scratch:
+    # # agent = Agent.from_scratch(n_channels=utils.history_length)
 
-    agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
-    # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
-                ckpt_step=save_every,
-                ckpt_path = ckpt_path 
-                ) # added more arguments
+    # agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
+    # # Train it:
+    # agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
+    #             ckpt_step=save_every,
+    #             ckpt_path = ckpt_path 
+    #             ) # added more arguments
 
     # Save it to file:
-    agent.save(os.path.join(ckpt_path, str(utils.curr_time())))
+    # agent.save(os.path.join(ckpt_path, str(utils.curr_time())))
  

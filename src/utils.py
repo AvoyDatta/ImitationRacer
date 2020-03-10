@@ -289,15 +289,22 @@ def preprocess_state(states):
 
     return states_pp
 
-def stack_history(X, y, N, shuffle=False, sample_interval=1):
+def downsample_along_last(arr, factor):
+    idxs = np.arange(arr.shape[-1])
+    idxs = idxs[::-1][::factor][::-1]
+    assert len(arr.shape) == 4
+    
+    return arr[:, :, :, idxs]
+
+def stack_history(X, y, N, shuffle=False, si=1):
     """ Stack states from the expert database into volumes of depth=history_length """
-    x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
-    # x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(2*N, len(X)+1)]
+    # x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
+    x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(2*N, len(X)+1)]
 
     x_stack = np.moveaxis(x_stack, 1, -1)
-    y_stack = y[N-1:]
+    y_stack = y[2*N-1:]
 
-
+    print(len(x_stack), len(y_stack))
     # Unused
     # if shuffle:
     #     order = np.arange(len(x_stack))

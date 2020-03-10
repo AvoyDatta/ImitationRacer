@@ -8,18 +8,22 @@ from agent import Agent
 import utils
 import argparse
 import time 
+from utils import config
+
+np.random.seed(config['random_seed'])
+
 
 ckpt_dir = '../ckpts/'
 results_dir = '../results/'
 ep_len = 60 #length of episdoe in seconds
 
 
-def run_episode(env, agent, rendering=True, max_timesteps=1000):
+def run_episode(env, agent, sample_interval, rendering=True, max_timesteps=1000):
     # Reset reward accumulator
     episode_reward = 0
     # Inform environment and agent that a new episode is about to begin:
     env_state = env.reset()
-    agent.begin_new_episode(state0=env_state)
+    agent.begin_new_episode(state0=env_state, si=sample_interval)
 
 
     start_time = time.time()
