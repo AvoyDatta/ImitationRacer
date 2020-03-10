@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    np.random.seed(parser.seed)
+    np.random.seed(args.seed)
     if not args.ts:
         raise Exception("Enter timestamp for ckpt from training run!")
     user_path = os.path.join(ckpt_dir, args.user, args.model, args.ts)
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     # Episodes loop:
     episode_rewards = []
     for i in range(n_test_episodes):
-        episode_reward = run_episode(env, agent, rendering=True)
+        episode_reward = run_episode(env, agent, rendering=True, sample_interval = config['sample_interval'])
         episode_rewards.append(episode_reward)
         print(f'Episode {i+1} reward:{episode_reward:.2f}')
     env.close()
