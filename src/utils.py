@@ -21,7 +21,7 @@ import pdb
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 3
+history_length = 10
 
 
 # Number of first states of each episode that shall be ignored
@@ -51,7 +51,7 @@ config = {
     'num_classes': n_actions,
     'class_balancing': False,
     'sample_interval': 2,
-    'random_seed': 10
+    'random_seed': 7
 }
 
 
@@ -289,7 +289,7 @@ def preprocess_state(states):
 
     return states_pp
 
-def stack_history(X, y, N, shuffle=False, si=1):
+def stack_history(X, y, N, shuffle=False, sample_interval=1):
     """ Stack states from the expert database into volumes of depth=history_length """
     x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
     # x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(2*N, len(X)+1)]
