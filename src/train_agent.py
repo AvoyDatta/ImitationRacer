@@ -92,9 +92,14 @@ if __name__ == "__main__":
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
     parser.add_argument("--seed", type=int, default=10, help="Insert random seed.")
+    parser.add_argument("--lr", type=float, default=5e-4, help="Insert learning rate.")
+    parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
+
 
     args = parser.parse_args()
 
+    config['sample_interval'] = args.si
+    lr = args.lr
 
     c_time = utils.curr_time()
     ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model, c_time)
@@ -130,7 +135,7 @@ if __name__ == "__main__":
     # agent = Agent.from_scratch(n_channels=utils.history_length)
 
     agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
-    lr = 5e-3
+    # lr = 5e-3
     log_path = os.path.join(os.getcwd(), log_dir, args.user, args.model)
     if not os.path.exists(log_path):
     	os.makedirs(log_path)
