@@ -67,9 +67,9 @@ class Agent:
         model = mnn.models.Classifier_From_File(file_name)#('saved_models/')
         return Agent(model)
 
-    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path):
+    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path, seed):
         print("Training model")
-        self.model.train(X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path)
+        self.model.train(X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path, seed)
 
     def begin_new_episode(self, state0, si=1):
         # A history of the last n agent's actions
