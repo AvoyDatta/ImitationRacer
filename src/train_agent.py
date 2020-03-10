@@ -96,6 +96,7 @@ if __name__ == "__main__":
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
         print("Created ckpt dir: ", ckpt_path)
+    ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model)
 
 
     # pdb.set_trace()
