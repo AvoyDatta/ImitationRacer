@@ -12,6 +12,7 @@
 
 *lstm_1.0*: LSTM, sample_interval = 2, no class balancing, history_len = 3 
 
+*lstm_1.0.1*: LSTM, sample_interval = 2,  no class balancing + reduce accelerate, history_len = 5
 
 *Sample train (from ImitationRacer/src)*
 
