@@ -65,12 +65,13 @@ if __name__ == "__main__":
     parser.add_argument("--eps", type=int, default=15, help="Insert number of episodes to run.")
     parser.add_argument("--ts", type=str, help="Time stamp at which the model was run")
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
-    parser.add_argument("--seed", type=int, default=10, help="Insert random seed.")
+    parser.add_argument("--seed", type=int, default=10, help="Random seed.")
 
 
     args = parser.parse_args()
 
     np.random.seed(args.seed)
+
     if not args.ts:
         raise Exception("Enter timestamp for ckpt from training run!")
     user_path = os.path.join(ckpt_dir, args.user, args.model, args.ts)
