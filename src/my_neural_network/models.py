@@ -93,6 +93,8 @@ class Classifier_From_Layers:
 
         if not os.path.exists(ckpt_path):
             os.makedirs(ckpt_path)
+            print("Created ckpt dir: ", ckpt_path)
+
 
         writer = tf.summary.FileWriter(os.path.join(tensorboard_path, train_start), self.sess.graph)
         # Training loop:
