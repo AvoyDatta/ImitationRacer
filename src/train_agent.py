@@ -102,31 +102,29 @@ if __name__ == "__main__":
     X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False, sample_interval=config['sample_interval'])
 
     # return
-    # # Plot action histogram. JUST FOR DEBUGGING.
-    # plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
+    # Plot action histogram. JUST FOR DEBUGGING.
+    plot_action_histogram(y_pp, 'Action distribution BEFORE balancing')   
 
-    # # Balance as per min action  
-    # # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
-    # X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, 0.5)
+    # Balance as per min action  
+    # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
+    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, 0.5)
 
-    # # Plot action histogram. JUST FOR DEBUGGING.
-    # plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
+    # Plot action histogram. JUST FOR DEBUGGING.
+    plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
 
-    # # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
-    # # Requires to run the above fucntion with hist_len=1, shuffle=False.
-    # # plot_states(X_pp, X)
-    # # Split data into training and validation:
-    # X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1)
-    # # Create a new agent from scratch:
-    # # agent = Agent.from_scratch(n_channels=utils.history_length)
+    # Plot some random states before and after preprocessing. JUST FOR DEBUGGING. 
+    # Requires to run the above fucntion with hist_len=1, shuffle=False.
+    # plot_states(X_pp, X)
+    # Split data into training and validation:
+    X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1)
+    # Create a new agent from scratch:
+    # agent = Agent.from_scratch(n_channels=utils.history_length)
 
-    # agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
-    # # Train it:
-    # agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
-    #             ckpt_step=save_every,
-    #             ckpt_path = ckpt_path 
-    #             ) # added more arguments
+    agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
+    # Train it:
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
+                ckpt_step=save_every,
+                ckpt_path = ckpt_path 
+                ) # added more arguments
 
-    # Save it to file:
-    # agent.save(os.path.join(ckpt_path, str(utils.curr_time())))
  
