@@ -13,7 +13,8 @@ data_dir = '../data/'
 ckpt_dir = '../ckpts/'
 log_dir = '../logs'
 save_every = 1000
-np.random.seed(config['random_seed'])
+
+# np.random.seed(config['random_seed'])
 
 
 
@@ -49,12 +50,13 @@ def preprocess_data(X, y, hist_len, shuffle, sample_interval=1):
     X_pp, y_pp = utils.stack_history(X_pp, y_pp, hist_len, shuffle=shuffle, si=sample_interval)
     return X_pp, y_pp
 
-def split_data(X, y, frac = 0.1, shuffle = True):
+def split_data(X, y, frac = 0.1, shuffle = True, seed=10):
     """ Splits data into training and validation set """
     split = int((1-frac) * len(y))
 
     if shuffle:
         idxs = np.arange(len(X))
+        np.random.seed(seed)
         np.random.shuffle(idxs)
         X = X[idxs]
         y = y[idxs]
@@ -89,8 +91,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
+    parser.add_argument("--seed", type=int, default=10, help="Insert random seed.")
 
     args = parser.parse_args()
+
+
     c_time = utils.curr_time()
     ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model, c_time)
     if not os.path.exists(ckpt_path):
@@ -111,7 +116,7 @@ if __name__ == "__main__":
     # Balance as per min action  
     # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
     drop_prob = 0.5
-    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob)
+    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob, seed=parser.seed)
 
     # Plot action histogram. JUST FOR DEBUGGING.
     plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
@@ -120,12 +125,12 @@ if __name__ == "__main__":
     # Requires to run the above fucntion with hist_len=1, shuffle=False.
     # plot_states(X_pp, X)
     # Split data into training and validation:
-    X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1)
+    X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1, seed=parser.seed)
     # Create a new agent from scratch:
     # agent = Agent.from_scratch(n_channels=utils.history_length)
 
     agent = Agent.from_scratch(args.model, utils.config, n_channels=config['history_length'])
-    lr = 5e-4
+    lr = 5e-3
     log_path = os.path.join(os.getcwd(), log_dir, args.user)
     if not os.path.exists(log_path):
     	os.mkdir(log_path)
@@ -142,7 +147,8 @@ if __name__ == "__main__":
     # Train it:
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=100, lr=5e-4, display_step=100,
                 ckpt_step=save_every,
-                ckpt_path = ckpt_path 
+                ckpt_path = ckpt_path,
+                seed=parser.seed 
                 ) # added more arguments
 
  

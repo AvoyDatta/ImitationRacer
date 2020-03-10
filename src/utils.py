@@ -51,7 +51,7 @@ config = {
     'num_classes': n_actions,
     'class_balancing': False,
     'sample_interval': 2,
-    'random_seed': 7
+    # 'random_seed': 7
 }
 
 
@@ -207,7 +207,7 @@ def check_invalid_actions(y):
     if ia_count > 0:
         raise Exception('Invalid actions. Do something developer!')
 
-def reduce_accelerate(X, y, drop_prob):
+def reduce_accelerate(X, y, drop_prob, seed=10):
     """ Balance samples. Gets hide of a share of the most common action (accelerate) """
     # Enconding of the action accelerate
     acceler = np.zeros(7)
@@ -217,6 +217,7 @@ def reduce_accelerate(X, y, drop_prob):
     # Get the index of all other samples (not accelerate)
     other_actions_index = np.where(np.logical_not(is_accel))
     # Randomly pick drop some accelerate samples. Probabiliy of dropping is given by drop_prob
+    np.random.seed(seed)
     drop_mask = np.random.rand(len(is_accel)) > drop_prob
     accel_keep = drop_mask * is_accel
     # Get the index of accelerate samples that were kept
@@ -293,7 +294,7 @@ def downsample_along_last(arr, factor):
     idxs = np.arange(arr.shape[-1])
     idxs = idxs[::-1][::factor][::-1]
     assert len(arr.shape) == 4
-    
+
     return arr[:, :, :, idxs]
 
 def stack_history(X, y, N, shuffle=False, si=1):

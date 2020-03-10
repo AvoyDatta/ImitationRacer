@@ -18,8 +18,8 @@ import utils
 import sklearn
 from sklearn.utils.class_weight import compute_class_weight
 from utils import config
-tf.set_random_seed(config['random_seed'])
-np.random.seed(config['random_seed'])
+# tf.set_random_seed(config['random_seed'])
+# np.random.seed(config['random_seed'])
 
 
 
@@ -81,7 +81,10 @@ class Classifier_From_Layers:
 
 
     def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step=100,
-              ckpt_step=1e4, ckpt_path=None):
+              ckpt_step=1e4, ckpt_path=None, seed=10):
+
+        tf.set_random_seed(seed)
+       
         optimizer = tf.train.AdamOptimizer(learning_rate=lr)
         #optimizer = tf.train.MomentumOptimizer(lr, 0.9, use_nesterov=True)
         train_op = optimizer.minimize(self.loss_fn)
@@ -104,6 +107,7 @@ class Classifier_From_Layers:
 
         for step in range(n_batches):
             # Sample training data
+            np.random.seed(seed)
             pick = np.random.randint(0, len(y_train), batch_size)
             batch_x = X_train[pick]
             batch_y = y_train[pick]
