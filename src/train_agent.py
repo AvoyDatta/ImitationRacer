@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # Balance as per min action  
     # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
     drop_prob = 0.5
-    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob, seed=parser.seed)
+    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob, seed=args.seed)
 
     # Plot action histogram. JUST FOR DEBUGGING.
     plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     # Requires to run the above fucntion with hist_len=1, shuffle=False.
     # plot_states(X_pp, X)
     # Split data into training and validation:
-    X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1, seed=parser.seed)
+    X_train, y_train, X_valid, y_valid = split_data(X_pp, y_pp, frac=.1, seed=args.seed)
     # Create a new agent from scratch:
     # agent = Agent.from_scratch(n_channels=utils.history_length)
 
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=128, lr=lr, display_step=100,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path,
-                seed=parser.seed 
+                seed=args.seed 
                 ) # added more arguments
 
  
