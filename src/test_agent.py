@@ -66,6 +66,7 @@ if __name__ == "__main__":
     parser.add_argument("--ts", type=str, help="Time stamp at which the model was run")
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
     parser.add_argument("--seed", type=int, default=10, help="Random seed.")
+    parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
 
 
     args = parser.parse_args()
@@ -94,7 +95,7 @@ if __name__ == "__main__":
     # Episodes loop:
     episode_rewards = []
     for i in range(n_test_episodes):
-        episode_reward = run_episode(env, agent, rendering=True, sample_interval = config['sample_interval'])
+        episode_reward = run_episode(env, agent, rendering=True, sample_interval = args.si)
         episode_rewards.append(episode_reward)
         print(f'Episode {i+1} reward:{episode_reward:.2f}')
     env.close()
