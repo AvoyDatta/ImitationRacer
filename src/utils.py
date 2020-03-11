@@ -21,7 +21,7 @@ import pdb
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 1
+history_length = 3
 
 
 # Number of first states of each episode that shall be ignored
