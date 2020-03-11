@@ -115,25 +115,31 @@ class Classifier_From_Layers:
             # Foward and backward pass
             # print(wts.shape, wts)
             if self.class_balancing:
-                self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.class_weights:wts, self.train_mode: True})
+                _, loss, train_acc, summ = self.sess.run([train_op, self.loss_fn, self.accuracy, self.summ_train], 
+                    feed_dict={self.input: batch_x, self.labels: batch_y, self.class_weights:wts, self.train_mode: True})
             else:
-                self.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
-
+                # _, lossself.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
+                _, loss, train_acc, summ = self.sess.run([train_op, self.loss_fn, self.accuracy, self.summ_train], 
+                    feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
             # Display and store loss and accuracies every display_step
-
-            ## DEBUG
-            debug_argmax = self.sess.run(self.prediction, 
-                    feed_dict={self.input: batch_x, self.train_mode: False})
-            unique, counts = np.unique(debug_argmax, return_counts=True)
-
             ##
 
             if step % display_step == 0:
+                ## DEBUG
+                debug_argmax = self.sess.run(self.prediction, 
+                        feed_dict={self.input: batch_x, self.train_mode: False})
+                unique, counts = np.unique(debug_argmax, return_counts=True)
+
                 debug_dict = dict(zip(unique, counts))
-                print(debug_dict)
+                print("Preds: ", debug_dict)
+
+                unique_labels, counts_labels = np.unique(np.argmax(batch_y, 1), return_counts=True)
+
+                print("Labels: ", dict(zip(unique_labels, counts_labels)))
+
                 # Training statistics
-                loss, train_acc, summ = self.sess.run([self.loss_fn, self.accuracy, self.summ_train], 
-                    feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: False})
+                # loss, train_acc, summ = self.sess.run([self.loss_fn, self.accuracy, self.summ_train], 
+                #     feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: False})
                 writer.add_summary(summ, step)
                 # Validation statistics
                 val_acc, summ = self.sess.run([self.accuracy, self.summ_valid], 
