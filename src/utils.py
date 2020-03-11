@@ -21,7 +21,7 @@ import pdb
 
 # Tells how long should the history be.
 # Altering this variable has effects on ALL modules
-history_length = 10
+history_length = 1
 
 
 # Number of first states of each episode that shall be ignored
@@ -50,7 +50,7 @@ config = {
     'lstm_hidden': 64,
     'num_classes': n_actions,
     'class_balancing': False,
-    # 'sample_interval': 2,
+    'sample_interval': 1
     # 'random_seed': 7
 }
 
@@ -325,6 +325,16 @@ def vstack(arr):
     for i in range(1, len(arr)):
         stack = np.vstack((stack, arr[i][dead_start:]))
     return stack
+
+def compute_correlation(expert_json, agent_json):
+    bins = ranges#np.linspace(0,1000,10)
+    agent = read_json(agent_json)
+    expert = read_json(expert_json)
+    agent_rewards = np.array(agent["episode_rewards"])
+    expert_rewards = np.array(expert["episode_rewards"])
+    expert_hist = np.histogram(expert_rewards, bins)[0]
+    agent_hist = np.histogram(agent_rewards, bins)[0]
+    return expert_hist.dot(agent_hist)/(np.linalg.norm(expert_hist) * np.linalg.norm(agent_hist))
 
 def curr_time():
     return datetime.now().strftime("%Y%m%d-%H%M%S")
