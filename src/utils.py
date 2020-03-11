@@ -83,10 +83,10 @@ def comparison_histogram(save_path, expert_json, agent_json):
 
     # fig, ax = plt.subplots()
     # dist.plot.kde(ax=ax, legend=False, title='Histogram: Expert vs. Agent')
-    plt.hist(expert_rewards / np.sum(expert_rewards), color='salmon', bins=ranges, label='expert', alpha=.55)
-    plt.hist(agent_rewards / np.sum(agent_rewards), color='royalblue', bins=ranges, label='agent', alpha=.55)
+    plt.hist(expert_rewards, density=True, color='salmon', bins=ranges, label='expert', alpha=.55)
+    plt.hist(agent_rewards, density=True, color='royalblue', bins=ranges, label='agent', alpha=.55)
     plt.legend()
-    plt.ylabel("Proportion of Episodes"); plt.xlabel('Episode Rewards'); plt.title("Distribution of rewards for {} expert and {} agent demonstrations".format(len(expert_rewards), len(agent_rewards)))
+    plt.ylabel("Density of rewards"); plt.xlabel('Episode Rewards'); plt.title("Distribution of rewards for {} expert and {} agent demonstrations".format(len(expert_rewards), len(agent_rewards)))
     # dist.plot.hist(ax=ax)
     # ax.set_ylabel('Probability')
     # ax.grid(axis='y')
