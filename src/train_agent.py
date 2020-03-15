@@ -94,10 +94,12 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=10, help="Insert random seed.")
     parser.add_argument("--lr", type=float, default=5e-4, help="Insert learning rate.")
     parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
+    parser.add_argument("--hist_len", type=int, default=1, help="history_length.")
 
 
     args = parser.parse_args()
 
+    config['history_length'] = args.hist_len
     config['sample_interval'] = args.si
     lr = args.lr
 
@@ -112,7 +114,7 @@ if __name__ == "__main__":
     # pdb.set_trace()
     data_path = os.path.join(data_dir, args.user)
     X, y = read_data(data_path)
-    X_pp, y_pp = preprocess_data(X, y, hist_len=utils.history_length, shuffle=False, sample_interval=config['sample_interval'])
+    X_pp, y_pp = preprocess_data(X, y, hist_len=config['history_length'], shuffle=False, sample_interval=config['sample_interval'])
 
     # return
     # Plot action histogram. JUST FOR DEBUGGING.

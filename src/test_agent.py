@@ -67,9 +67,12 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
     parser.add_argument("--seed", type=int, default=10, help="Random seed.")
     parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
+    parser.add_argument("--hist_len", type=int, default=1, help="Insert history length.")
 
 
     args = parser.parse_args()
+
+    config['history_length'] = args.hist_len
 
     np.random.seed(args.seed)
 
