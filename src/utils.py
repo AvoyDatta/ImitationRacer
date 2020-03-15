@@ -46,7 +46,7 @@ n_actions = len(actions)
 
 config = {
     'lstm_inp_dim': 64,
-    'history_length':history_length,
+    # 'history_length':history_length,
     'lstm_hidden': 64,
     'num_classes': n_actions,
     'class_balancing': False,
