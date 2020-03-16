@@ -80,7 +80,7 @@ class Classifier_From_Layers:
         self.summ_valid = tf.summary.scalar('Validation accuracy', self.accuracy)
 
 
-    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step=100,
+    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, n_epochs=2,display_step=100,
               ckpt_step=1e4, ckpt_path=None, seed=10):
 
         tf.set_random_seed(seed)
@@ -105,70 +105,79 @@ class Classifier_From_Layers:
 
         if self.class_balancing: 
             wts = np.expand_dims(compute_class_weight('balanced', np.arange(y_train.shape[-1]), np.argmax(y_train, axis=1)), 1)
+        
+        for epoch in range(n_epochs):
+            L = X_train.shape[0]
+            step =0
+            print("#### START OF EPOCH " + str(epoch) + " ####")
+            while step + batch_size -1 <= L:
+                # sample all elements
+                batch_x = X_train[step:step + batch_size]
+                batch_y = y_train[step:step + batch_size]
+                # Sample training data
+                # pick = np.random.randint(0, len(y_train), batch_size)
+                # batch_x = X_train[pick]
+                # batch_y = y_train[pick]
+                # batch_wts = wts[pick]
+                # Foward and backward pass
+                # print(wts.shape, wts)
+                if self.class_balancing:
+                    _, loss, train_acc, summ = self.sess.run([train_op, self.loss_fn, self.accuracy, self.summ_train], 
+                        feed_dict={self.input: batch_x, self.labels: batch_y, self.class_weights:wts, self.train_mode: True})
+                else:
+                    # _, lossself.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
+                    _, loss, train_acc, summ = self.sess.run([train_op, self.loss_fn, self.accuracy, self.summ_train], 
+                        feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
+                # Display and store loss and accuracies every display_step
+                ##
 
-        for step in range(n_batches):
-            # Sample training data
-            pick = np.random.randint(0, len(y_train), batch_size)
-            batch_x = X_train[pick]
-            batch_y = y_train[pick]
-            # batch_wts = wts[pick]
-            # Foward and backward pass
-            # print(wts.shape, wts)
-            if self.class_balancing:
-                _, loss, train_acc, summ = self.sess.run([train_op, self.loss_fn, self.accuracy, self.summ_train], 
-                    feed_dict={self.input: batch_x, self.labels: batch_y, self.class_weights:wts, self.train_mode: True})
-            else:
-                # _, lossself.sess.run(train_op, feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
-                _, loss, train_acc, summ = self.sess.run([train_op, self.loss_fn, self.accuracy, self.summ_train], 
-                    feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: True})
-            # Display and store loss and accuracies every display_step
-            ##
+                if step % display_step == 0:
+                    ## DEBUG
+                    debug_argmax = self.sess.run(self.prediction, 
+                            feed_dict={self.input: batch_x, self.train_mode: False})
+                    unique, counts = np.unique(debug_argmax, return_counts=True)
 
-            if step % display_step == 0:
-                ## DEBUG
-                debug_argmax = self.sess.run(self.prediction, 
-                        feed_dict={self.input: batch_x, self.train_mode: False})
-                unique, counts = np.unique(debug_argmax, return_counts=True)
+                    debug_dict = dict(zip(unique, counts))
+                    print("Preds: ", debug_dict)
 
-                debug_dict = dict(zip(unique, counts))
-                print("Preds: ", debug_dict)
+                    unique_labels, counts_labels = np.unique(np.argmax(batch_y, 1), return_counts=True)
 
-                unique_labels, counts_labels = np.unique(np.argmax(batch_y, 1), return_counts=True)
+                    print("Labels: ", dict(zip(unique_labels, counts_labels)))
 
-                print("Labels: ", dict(zip(unique_labels, counts_labels)))
+                    # Training statistics
+                    # loss, train_acc, summ = self.sess.run([self.loss_fn, self.accuracy, self.summ_train], 
+                    #     feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: False})
+                    writer.add_summary(summ, step)
+                    # Validation statistics
+                    val_acc, summ = self.sess.run([self.accuracy, self.summ_valid], 
+                        feed_dict={self.input: X_valid, self.labels: y_valid, self.train_mode: False})
+                    writer.add_summary(summ, step)
+                    print(f'Step: {step}, Loss: {loss:.5f}, Training accuracy: {train_acc:.4f}, Validation accuracy: {val_acc:.4f}')
+                    #print(pick)
 
-                # Training statistics
-                # loss, train_acc, summ = self.sess.run([self.loss_fn, self.accuracy, self.summ_train], 
-                #     feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: False})
-                writer.add_summary(summ, step)
-                # Validation statistics
-                val_acc, summ = self.sess.run([self.accuracy, self.summ_valid], 
-                    feed_dict={self.input: X_valid, self.labels: y_valid, self.train_mode: False})
-                writer.add_summary(summ, step)
-                print(f'Step: {step}, Loss: {loss:.5f}, Training accuracy: {train_acc:.4f}, Validation accuracy: {val_acc:.4f}')
-                print(pick)
+                if step % ckpt_step ==0:
 
-            if step % ckpt_step ==0:
+                    # Validation statistics
+                    val_acc, summ = self.sess.run([self.accuracy, self.summ_valid],
+                                                  feed_dict={self.input: X_valid, self.labels: y_valid,
+                                                             self.train_mode: False})
+                    #writer.add_summary(summ, step)
 
-                # Validation statistics
-                val_acc, summ = self.sess.run([self.accuracy, self.summ_valid],
-                                              feed_dict={self.input: X_valid, self.labels: y_valid,
-                                                         self.train_mode: False})
-                #writer.add_summary(summ, step)
+                    ## save model as ValAcc_timeStamp
+                    # create string_name
+                    current_time = utils.curr_time()
+                    val_string = str(round(val_acc, 3))
 
-                ## save model as ValAcc_timeStamp
-                # create string_name
-                current_time = utils.curr_time()
-                val_string = str(round(val_acc, 3))
+                    new_path = val_string + "_" + current_time
+                    save_path = os.path.join(ckpt_path, new_path)
 
-                new_path = val_string + "_" + current_time
-                save_path = os.path.join(ckpt_path, new_path)
-
-                if not os.path.exists(save_path):
-                    os.makedirs(save_path)               
-                #pdb.set_trace()
-                print('Saving Model\n')
-                self.save(save_path)
+                    if not os.path.exists(save_path):
+                        os.makedirs(save_path)               
+                    #pdb.set_trace()
+                    print('Saving Model\n')
+                    self.save(save_path)
+                step +=batch_size
+            print("#### END OF EPOCH " + str(epoch) + " ####")
         
         writer.close()
         print("Training finished.")
