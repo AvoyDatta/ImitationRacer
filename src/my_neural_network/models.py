@@ -80,7 +80,7 @@ class Classifier_From_Layers:
         self.summ_valid = tf.summary.scalar('Validation accuracy', self.accuracy)
 
 
-    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step=100,
+    def train(self, X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, train_start=None, display_step=100,
               ckpt_step=1e4, ckpt_path=None, seed=10):
 
         tf.set_random_seed(seed)
@@ -92,7 +92,8 @@ class Classifier_From_Layers:
         init = tf.global_variables_initializer()
         self.sess.run(init)
         # Setup a writter for tensorboard summaries
-        train_start = utils.curr_time()
+        if train_start is None:
+            train_start = utils.curr_time()
         ckpt_path = os.path.join(ckpt_path, train_start)
 
         if not os.path.exists(ckpt_path):

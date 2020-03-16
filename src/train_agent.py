@@ -94,7 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=10, help="Insert random seed.")
     parser.add_argument("--lr", type=float, default=5e-4, help="Insert learning rate.")
     parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
-    parser.add_argument("--hist_len", type=int, default=1, help="history_length.")
+    parser.add_argument("--hist_len", type=int, default=3, help="history_length.")
 
 
     args = parser.parse_args()
@@ -104,11 +104,12 @@ if __name__ == "__main__":
     lr = args.lr
 
     c_time = utils.curr_time()
-    ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model, c_time)
-    if not os.path.exists(ckpt_path):
-        os.makedirs(ckpt_path)
-        print("Created ckpt dir: ", ckpt_path)
     ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model)
+
+    # ckpt_path = os.path.join(os.getcwd(), ckpt_dir, args.user, args.model)
+    # if not os.path.exists(ckpt_path):
+    #     os.makedirs(ckpt_path)
+    #     print("Created ckpt dir: ", ckpt_path)
 
 
     # pdb.set_trace()
@@ -122,9 +123,11 @@ if __name__ == "__main__":
 
     # Balance as per min action  
     # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
-    drop_prob = 0.5
-    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob, seed=args.seed)
+    # drop_prob = 0.5
+    # X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob, seed=args.seed)
+    X_pp, y_pp, drop_prob = utils.balance_first_two(X_pp, y_pp, seed=args.seed)
 
+    # pass
     # Plot action histogram. JUST FOR DEBUGGING.
     plot_action_histogram(y_pp, 'Action distribution AFTER balancing')   
 
@@ -155,7 +158,8 @@ if __name__ == "__main__":
     agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=128, lr=lr, display_step=100,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path,
-                seed=args.seed 
+                seed=args.seed,
+                train_start=c_time 
                 ) # added more arguments
 
  

@@ -207,6 +207,40 @@ def check_invalid_actions(y):
     if ia_count > 0:
         raise Exception('Invalid actions. Do something developer!')
 
+def balance_first_two(X, y, seed=10):
+    """ Balance samples. Gets hide of a share of the most common action (accelerate) """
+    # Enconding of the action accelerate
+
+    ## identify index to reduce, and set drop_prob
+    counts = np.sum(y, axis=0)
+    print("Original counts: ", counts)
+    target_idx = 0 if counts[0] >= counts[1] else 1
+    drop_prob = 1. - (counts[int(1 - target_idx)] * 1./ counts[target_idx])
+    print("Estimated drop prob: ", drop_prob)
+    acceler = np.zeros(7)
+    acceler[target_idx] = 1.
+    # Find out what samples are labeled as accelerate
+    is_accel = np.all(y==acceler, axis=1)
+
+    # print(is_accel)
+    # Get the index of all other samples (not accelerate)
+    other_actions_index = np.where(np.logical_not(is_accel))
+    # Randomly pick drop some accelerate samples. Probabiliy of dropping is given by drop_prob
+    np.random.seed(seed)
+    drop_mask = np.random.rand(len(is_accel)) > drop_prob
+    accel_keep = drop_mask * is_accel
+    # Get the index of accelerate samples that were kept
+    accel_keep_index = np.where(accel_keep)
+    # Put all actions that we want to keep together
+    final_keep = np.squeeze(np.hstack((other_actions_index, accel_keep_index)))
+    final_keep = np.sort(final_keep)
+    X_bal, y_bal = X[final_keep], y[final_keep]
+
+    print("Reduced counts: ", np.sum(y_bal, axis=0))
+
+    return X_bal, y_bal, drop_prob
+
+
 def reduce_accelerate(X, y, drop_prob, seed=10):
     """ Balance samples. Gets hide of a share of the most common action (accelerate) """
     # Enconding of the action accelerate
