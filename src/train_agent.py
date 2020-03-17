@@ -95,6 +95,7 @@ if __name__ == "__main__":
     parser.add_argument("--lr", type=float, default=5e-4, help="Insert learning rate.")
     parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
     parser.add_argument("--hist_len", type=int, default=3, help="history_length.")
+    parser.add_argument("--batch_size", type=int, default=128, help="batch_size.")
 
 
     args = parser.parse_args()
@@ -150,12 +151,13 @@ if __name__ == "__main__":
     model_config['user'] = args.user
     model_config['acc_drop_prob'] = drop_prob
     model_config['learning_rate'] = lr
+    model_config['batch_size'] = args.batch_size
     fname = os.path.join(log_path, c_time + ".json")
     with open(fname, 'w') as fh:
     	json.dump(model_config, fh)
 
     # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=128, lr=lr, display_step=100,
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=args.batch_size, lr=lr, display_step=100,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path,
                 seed=args.seed,
