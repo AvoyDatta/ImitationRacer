@@ -12,7 +12,7 @@ import argparse
 data_dir = '../data/'
 ckpt_dir = '../ckpts/'
 log_dir = '../logs'
-save_every = 1000
+save_every = 5000
 
 # np.random.seed(config['random_seed'])
 

@@ -105,7 +105,8 @@ class Classifier_From_Layers:
 
         if self.class_balancing: 
             wts = np.expand_dims(compute_class_weight('balanced', np.arange(y_train.shape[-1]), np.argmax(y_train, axis=1)), 1)
-        
+
+        global_step = 0
         for epoch in range(n_epochs):
             L = X_train.shape[0]
             step =0
@@ -147,11 +148,11 @@ class Classifier_From_Layers:
                     # Training statistics
                     # loss, train_acc, summ = self.sess.run([self.loss_fn, self.accuracy, self.summ_train], 
                     #     feed_dict={self.input: batch_x, self.labels: batch_y, self.train_mode: False})
-                    writer.add_summary(summ, step)
+                    writer.add_summary(summ, global_step)
                     # Validation statistics
                     val_acc, summ = self.sess.run([self.accuracy, self.summ_valid], 
                         feed_dict={self.input: X_valid, self.labels: y_valid, self.train_mode: False})
-                    writer.add_summary(summ, step)
+                    writer.add_summary(summ, global_step)
                     print(f'Step: {step}, Loss: {loss:.5f}, Training accuracy: {train_acc:.4f}, Validation accuracy: {val_acc:.4f}')
                     #print(pick)
 
@@ -177,6 +178,7 @@ class Classifier_From_Layers:
                     print('Saving Model\n')
                     self.save(save_path)
                 step +=batch_size
+                global_step += 1
             print("#### END OF EPOCH " + str(epoch) + " ####")
         
         writer.close()
