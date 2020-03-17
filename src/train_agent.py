@@ -18,27 +18,40 @@ save_every = 5000
 
 
 
-def read_data(data_path, use_last = False):
-    # TODO: Fix the file thing
-    print("Reading data...")
-    all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
+# def read_data(data_path, use_last = False):
+#     # TODO: Fix the file thing
+#     print("Reading data...")
+#     all_states, _, _, all_actions, _ = utils.read_all_gzip(data_path)
 
-    if use_last:
-        all_states = all_states[-1:]
-        all_actions = all_actions[-1:]
+#     if use_last:
+#         all_states = all_states[-1:]
+#         all_actions = all_actions[-1:]
 
-    X = utils.vstack(all_states)
-    y = utils.vstack(all_actions)
+#     X = utils.vstack(all_states)
+#     y = utils.vstack(all_actions)
 
+#     return X, y
+
+def read_data(data_path):
+    """Reads the states and actions recorded by drive_manually.py"""
+    print("Reading data")
+    #pdb.set_trace()
+    with gzip.open('./data_from_expert/data_02.pkl.gzip','rb') as f:
+        data = pickle.load(f)
+    X = utils.vstack(data["state"])
+    y = utils.vstack(data["action"])
     return X, y
 
-# def read_data():
+# def read_data(data_path):
 #     """Reads the states and actions recorded by drive_manually.py"""
 #     print("Reading data")
-#     with gzip.open('./data_from_expert/data_02.pkl.gzip','rb') as f:
-#         data = pickle.load(f)
-#     X = utils.vstack(data["state"])
-#     y = utils.vstack(data["action"])
+#     pdb.set_trace()
+#     file_path = os.path.join(data_path,'data_20200316-193031.pkl.gzip')
+#     all_states, _, _, all_actions, _ = utils.read_one_gzip(file_path)
+#     #with gzip.open(file_path,'rb') as f:
+#     #    data = pickle.load(f)
+#     X = utils.vstack(all_states)
+#     y = utils.vstack(all_actions)
 #     return X, y
 
 def preprocess_data(X, y, hist_len, shuffle, sample_interval=1):
@@ -153,9 +166,9 @@ if __name__ == "__main__":
     	json.dump(model_config, fh)
 
     # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=128, lr=lr,
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=32, lr=lr,
                 n_epochs=args.num_epochs, 
-                display_step=100,
+                display_step=1,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path,
                 seed=args.seed 
