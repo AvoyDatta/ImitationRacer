@@ -18,12 +18,12 @@ results_dir = '../results/'
 ep_len = 60 #length of episdoe in seconds
 
 
-def run_episode(env, agent, sample_interval, rendering=True, max_timesteps=1000):
+def run_episode(env, agent, sample_interval, history_length, rendering=True, max_timesteps=1000):
     # Reset reward accumulator
     episode_reward = 0
     # Inform environment and agent that a new episode is about to begin:
     env_state = env.reset()
-    agent.begin_new_episode(state0=env_state, si=sample_interval)
+    agent.begin_new_episode(state0=env_state, hist_len=history_length, si=sample_interval)
 
 
     start_time = time.time()
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # Episodes loop:
     episode_rewards = []
     for i in range(n_test_episodes):
-        episode_reward = run_episode(env, agent, rendering=True, sample_interval = args.si)
+        episode_reward = run_episode(env, agent, rendering=True, sample_interval = args.si, history_length=args.hist_len)
         episode_rewards.append(episode_reward)
         print(f'Episode {i+1} reward:{episode_reward:.2f}')
     env.close()

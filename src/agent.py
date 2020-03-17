@@ -71,7 +71,7 @@ class Agent:
         print("Training model")
         self.model.train(X_train, y_train, X_valid, y_valid, n_batches, batch_size, lr, display_step, ckpt_step, ckpt_path, seed)
 
-    def begin_new_episode(self, state0, si=1):
+    def begin_new_episode(self, state0, hist_len=3, si=1):
         # A history of the last n agent's actions
         self.action_history = deque(maxlen=100)
         # Buffer for actions that may eventually overwrite the model
@@ -82,10 +82,10 @@ class Agent:
         # last 'history_lenght' states and will be fed to the model:
         # self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], utils.history_length))
         self.si = si
+        self.history_length = hist_len
+        self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], self.si*self.history_length))
 
-        self.state_hist = np.empty((1, state0.shape[0], state0.shape[1], self.si*utils.history_length))
-
-        for _ in range(utils.history_length):
+        for _ in range(self.history_length):
             self.__push_state(state0)
 
     def __push_state(self, state):
