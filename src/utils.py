@@ -49,7 +49,7 @@ config = {
     #'history_length':history_length,
     'lstm_hidden': 64,
     'num_classes': n_actions,
-    'class_balancing': False,
+    'class_balancing': True,
     'sample_interval': 1
     # 'random_seed': 7
 }
