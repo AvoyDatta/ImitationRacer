@@ -28,6 +28,7 @@ import pdb
 # from the expert dataset:
 dead_start = 50
 # Set of allowed actions:
+default_act = 0
 actions = np.array([
     [ 0.0, 0.0, 0.0],  # STRAIGHT
     [ 0.0, 1.0, 0.0],  # ACCELERATE
@@ -163,8 +164,14 @@ def action_arr2id(arr):
     """ Converts action from the array format to an id (ranging from 0 to n_actions) """
     ids = []
     for a in arr:
-        id = np.where(np.all(actions==a, axis=1))
-        ids.append(id[0][0])
+        id_ = np.where(np.all(actions==a, axis=1))
+        # print(id_[0][0])
+        if len(id_[0]) == 0: 
+            print("Action not found: ", a)
+            print("Appending default: ", default_act)
+            ids.append(default_act)
+        else:
+            ids.append(id_[0][0])
     return np.array(ids)
 
 def action_id2arr(ids):
@@ -333,8 +340,8 @@ def downsample_along_last(arr, factor):
 
 def stack_history(X, y, N, shuffle=False, si=1):
     """ Stack states from the expert database into volumes of depth=history_length """
-    x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
-    # x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(si*N, len(X)+1)]
+    # x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
+    x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(si*N, len(X)+1)]
 
     x_stack = np.moveaxis(x_stack, 1, -1)
     y_stack = y[si*N-1:]
