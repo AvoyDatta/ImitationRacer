@@ -333,8 +333,8 @@ def downsample_along_last(arr, factor):
 
 def stack_history(X, y, N, shuffle=False, si=1):
     """ Stack states from the expert database into volumes of depth=history_length """
-    # x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
-    x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(si*N, len(X)+1)]
+    x_stack = [X[i - N : i] for i in range(N, len(X)+1)]
+    # x_stack = [X[::-1][len(X)-i:len(X)-i+si*N:si][::-1] for i in range(si*N, len(X)+1)]
 
     x_stack = np.moveaxis(x_stack, 1, -1)
     y_stack = y[si*N-1:]

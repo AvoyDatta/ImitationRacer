@@ -26,7 +26,7 @@ def key_press(k, mod):
     if k == key.DOWN:  a[2] = +0.4  # stronger brakes
 '''
 
-ep_len = 60 #length of episdoe in seconds
+ep_len = 6000 #length of episdoe in seconds
 
 def key_press(k, mod):
     global restart

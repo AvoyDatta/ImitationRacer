@@ -15,7 +15,7 @@ from utils import config
 
 ckpt_dir = '../ckpts/'
 results_dir = '../results/'
-ep_len = 60 #length of episdoe in seconds
+ep_len = 60000 #length of episdoe in seconds
 
 
 def run_episode(env, agent, sample_interval, history_length, rendering=True, max_timesteps=1000):
