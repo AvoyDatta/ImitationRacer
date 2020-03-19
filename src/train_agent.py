@@ -96,6 +96,7 @@ if __name__ == "__main__":
     parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
     parser.add_argument("--hist_len", type=int, default=3, help="history_length.")
     parser.add_argument("--batch_size", type=int, default=128, help="batch_size.")
+    parser.add_argument("--num_batches", type=int, default=200000, help="number of training batches.")
 
 
     args = parser.parse_args()
@@ -157,7 +158,7 @@ if __name__ == "__main__":
     	json.dump(model_config, fh)
 
     # Train it:
-    agent.train(X_train, y_train, X_valid, y_valid, n_batches=200000, batch_size=args.batch_size, lr=lr, display_step=100,
+    agent.train(X_train, y_train, X_valid, y_valid, n_batches=args.num_batches, batch_size=args.batch_size, lr=lr, display_step=100,
                 ckpt_step=save_every,
                 ckpt_path = ckpt_path,
                 seed=args.seed,
