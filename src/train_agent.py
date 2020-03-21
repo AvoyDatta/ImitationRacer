@@ -97,7 +97,7 @@ if __name__ == "__main__":
     parser.add_argument("--hist_len", type=int, default=3, help="history_length.")
     parser.add_argument("--batch_size", type=int, default=128, help="batch_size.")
     parser.add_argument("--num_batches", type=int, default=200000, help="number of training batches.")
-
+    parser.add_argument("--drop_acc", type=float, default=.5, help="Insert probability of dropping accelerations.")
 
     args = parser.parse_args()
 
@@ -126,8 +126,8 @@ if __name__ == "__main__":
     # Balance as per min action  
     # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
     # drop_prob = 0.5
-    # X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob, seed=args.seed)
-    X_pp, y_pp, drop_prob = utils.balance_first_two(X_pp, y_pp, seed=args.seed)
+    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob=args.drop_acc, seed=args.seed)
+    # X_pp, y_pp, drop_prob = utils.balance_first_two(X_pp, y_pp, seed=args.seed)
 
     # pass
     # Plot action histogram. JUST FOR DEBUGGING.

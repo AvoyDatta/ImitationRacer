@@ -383,6 +383,7 @@ def curr_time():
 if __name__ == "__main__":
     # print(read_json("../results/avoy/results_bc_agent-20200225-135131.json"))
 
-    comparison_histogram('histo.png', "../results_json/results_manually-20200223-175929.json", "../results_json/oneresults_bc_agent-20200225-134707.json")
-
+    # comparison_histogram('histo.png', "../results_json/results_manually-20200223-175929.json", "../results_json/oneresults_bc_agent-20200225-134707.json")
+    comparison_histogram("histo_test.png", "../data/output/avoy/results_manually_composite.json", "../results/avoy/lstm_0.2.0/20200320-170701/results_bc_agent-20200320-222021.json")
+    print(compute_correlation("../data/output/avoy/results_manually_composite.json", "../results/avoy/lstm_0.2.0/20200320-170701/results_bc_agent-20200320-222021.json"))
 
