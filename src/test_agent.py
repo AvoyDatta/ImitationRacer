@@ -64,11 +64,11 @@ if __name__ == "__main__":
     parser.add_argument("--user", type=str, default="user", help="Insert name of user generating data.")
     parser.add_argument("--eps", type=int, default=15, help="Insert number of episodes to run.")
     parser.add_argument("--ts", type=str, help="Time stamp at which the model was run")
-    parser.add_argument("--model", type=str, default="lstm", help="Insert name of model.")
-    parser.add_argument("--seed", type=int, default=10, help="Random seed.")
+    parser.add_argument("--model", type=str, default="lstm_0.0.0", help="Insert name of model.")
+    parser.add_argument("--seed", type=int, default=234, help="Random seed.")
     parser.add_argument("--si", type=int, default=1, help="Insert sample_interval.")
-    parser.add_argument("--hist_len", type=int, default=1, help="Insert history length.")
-
+    parser.add_argument("--hist_len", type=int, default=3, help="Insert history length.")
+    parser.add_argument("--specific_ckpt", type=str, default=None, help="Use specific ckpt.")
 
     args = parser.parse_args()
 
@@ -79,7 +79,11 @@ if __name__ == "__main__":
     if not args.ts:
         raise Exception("Enter timestamp for ckpt from training run!")
     user_path = os.path.join(ckpt_dir, args.user, args.model, args.ts)
-    saved_path = os.path.join(user_path, utils.get_model_path(user_path, metric='best'))
+
+    if args.specific_ckpt:
+        saved_path = os.path.join(user_path, args.specific_ckpt)
+    else:
+        saved_path = os.path.join(user_path, utils.get_model_path(user_path, metric='best'))
 
 
     if not os.path.exists(saved_path):

@@ -118,9 +118,12 @@ def get_model_path(save_dir, metric='best'):
     if not os.path.exists(save_dir):
         raise Exception("The ckpt dir doesn't exist!")
     if metric == 'best':
-        path = sorted(list([entry.name for entry in os.scandir(save_dir)]))[::-1][0]
+        path = sorted([tuple(entry.name.split('_')) for entry in os.scandir(save_dir)])[-1]
+        print(sorted([tuple(entry.name.split('_')) for entry in os.scandir(save_dir)]))
+        path = str(path[0]) + "_" + str(path[1])
     elif metric == 'recent':
-        path = sorted(list([entry.name.split('_')[1] for entry in os.scandir(save_dir)]))[::-1][0]
+        path = sorted([tuple(entry.name.split('_')[::-1]) for entry in os.scandir(save_dir)])[-1]
+        path = str(path[1]) + "_" + str(path[0])
     return path 
 
 

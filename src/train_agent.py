@@ -126,10 +126,10 @@ if __name__ == "__main__":
     # Balance as per min action  
     # X_pp, y_pp = utils.balance_min_actions(X_pp, y_pp)
     # drop_prob = 0.5
-    X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob=args.drop_acc, seed=args.seed)
+    # X_pp, y_pp = utils.reduce_accelerate(X_pp, y_pp, drop_prob=args.drop_acc, seed=args.seed)
 
     drop_prob = args.drop_acc
-    # X_pp, y_pp, drop_prob = utils.balance_first_two(X_pp, y_pp, seed=args.seed)
+    X_pp, y_pp, drop_prob = utils.balance_first_two(X_pp, y_pp, seed=args.seed)
 
     # pass
     # Plot action histogram. JUST FOR DEBUGGING.
