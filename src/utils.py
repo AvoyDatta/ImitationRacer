@@ -56,16 +56,17 @@ config = {
 }
 
 
-def read_json(json_path):
+def read_json(json_path, verbose=False):
     """
     Reads json, outputs dict 
     """
     with open(json_path, 'r') as fp:
         results = json.load(fp)
-        print(results.keys())
+        if verbose:
+            print(results.keys())
     return results
 
-def comparison_histogram(save_path, expert_json, agent_json):
+def comparison_histogram(save_path, expert_json, agent_json, savefig=True):
     """
     Plot histogram of score distribution for a user 
     """
@@ -91,8 +92,9 @@ def comparison_histogram(save_path, expert_json, agent_json):
     # dist.plot.hist(ax=ax)
     # ax.set_ylabel('Probability')
     # ax.grid(axis='y')
+    if savefig:
+        plt.savefig(save_path)
 
-    plt.savefig(save_path)
     # ax.set_facecolor('#d8dcd6')
 
 def read_one_gzip(filename):
