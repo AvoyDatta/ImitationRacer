@@ -2,6 +2,7 @@
 ![](vid.gif)
 
 This is our course project for the course CS234: Reinforcement Learning at Stanford University. Our report can be found at:
+https://drive.google.com/open?id=1tZ8GZ_H63oN-KbNSEMLBZCL3ITbY-2vP
 
 ## Requirements
 - gym 0.7.4
@@ -26,9 +27,9 @@ python train_agent.py --user <user name> --model <model name> --hist_len <histor
 python test_agent.py --user <user name> --model <model name> --ts <time stamp> --hist_len <history length> 
 ```
 
-### Acknowledgements
+## Acknowledgements
 We built our code base on top of Gui Miotto's code base, found here: 
 https://github.com/gui-miotto/DeepLearningLab/tree/master/Assignment%2003
 
-### Contact
+## Contact
 Please reach out to Avoy (avoy.datta@stanford.edu) or Aditya (adusi@stanford.edu) with questions, comments or feedback.
